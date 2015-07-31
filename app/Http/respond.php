@@ -13,47 +13,10 @@ class Respond{
   // status code
   protected $status = 400;
 
-  // respond headers
-  protected $headers = [];
-
   function __construct(Response $response, Request $request)
   {
     $this->response = $response;
     $this->request = $request;
-  }
-  /*
-   * set Content-Type header
-   *
-   * @return void
-   */
-  public function setContentType()
-  {
-    $this->setHeaders(['Content-Type' => config('response.defaultContentTypes')]);
-
-    if( $this->request->headers->get('Accept') !== null && in_array($this->request->headers->get('Accept'), config('response.contentTypes')) )
-    {
-      $this->setHeaders(['Content-Type' => $this->request->headers->get('Accept')]);
-    }
-  }
-
-  /*
-   * get headers
-   *
-   * @return array
-   */
-  public function getHeaders()
-  {
-    $this->setContentType();
-    return $this->headers;
-  }
-  /*
-   * set headers
-   *
-   * @return void
-   */
-  public function setHeaders($headers)
-  {
-    $this->headers = array_merge($this->headers, $headers);
   }
 
   /*
@@ -73,6 +36,19 @@ class Respond{
   public function setStatus($status)
   {
     $this->status = $status;
+  }
+
+  /*
+   * add header to response
+   *
+   * @param string $type
+   * @param string $header
+   *
+   * @return void
+   */
+  public function addHeader( $type, $header )
+  {
+    $this->response->header($type, $header);
   }
 
   /*
@@ -109,19 +85,13 @@ class Respond{
    * @method respond
    *
    * @param array $data
-   * @param int $status
-   * @param array $headers
    *
    * @return Illuminate\Http\Response
    */
-  public function respond($data, $status = HTTP_UNAUTHORIZED, $headers = [])
+  public function respond($data)
   {
     $this->response->setContent($data);
     $this->response->setStatusCode($this->getStatus());
-
-    foreach($this->getHeaders() as $type => $value){
-      $this->response->header($type, $value);
-    }
 
     return $this->response;
   }
@@ -133,23 +103,17 @@ class Respond{
    *
    * @param array $data
    * @param int $status
-   * @param array $headers
    *
    * @return Illuminate\Http\Response
    */
-  public function error($data, $status = 400, $headers = [])
+  public function error($data)
   {
     $error = array_merge(
-      ['status' => $status],
+      ['status' => $this->getStatus()],
       $data
     );
 
-    if( is_null($error['code']) )
-    {
-      unset($error['code']);
-    }
-
-    if( isset($error['code']) && is_int($error['code']) )
+    if( array_key_exists('code', $error) && !is_null($error['code']) && is_int($error['code']) )
     {
       $error['links'] = [
         'about' => $this->errorUrl($error['code'])
@@ -161,7 +125,67 @@ class Respond{
         [
           'error' => $error
         ]
-      ], $status, $headers);
+      ]);
+  }
+  /*
+   * respond with AuthenticationFailed
+   *
+   * @param array $data
+   *
+   * @return Illuminate\Http\Response
+   */
+  public function AuthenticationFailed($data)
+  {
+    $this->setStatus(401);
+    return $this->error($data);
+  }
+  /*
+   * respond with forbidden
+   *
+   * @param array $data
+   *
+   * @return Illuminate\Http\Response
+   */
+  public function forbidden($data)
+  {
+    $this->setStatus(403);
+    return $this->error($data);
+  }
+  /*
+   * respond with notFound
+   *
+   * @param array $data
+   *
+   * @return Illuminate\Http\Response
+   */
+  public function notFound($data)
+  {
+    $this->setStatus(404);
+    return $this->error($data);
+  }
+  /*
+   * respond with NotAcceptable
+   *
+   * @param array $data
+   *
+   * @return Illuminate\Http\Response
+   */
+  public function NotAcceptable($data)
+  {
+    $this->setStatus(406);
+    return $this->error($data);
+  }
+  /*
+   * respond with NotAcceptable
+   *
+   * @param array $data
+   *
+   * @return Illuminate\Http\Response
+   */
+  public function UnsupportedMediaType($data)
+  {
+    $this->setStatus(415);
+    return $this->error($data);
   }
 
   /*
@@ -180,7 +204,7 @@ class Respond{
       ], $data
     );
 
-    return $this->respond($data, $this->getStatus());
+    return $this->respond($data);
   }
 
   /*

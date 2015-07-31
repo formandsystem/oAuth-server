@@ -19,19 +19,19 @@ class OauthController extends ApiController
     }
     catch(LeagueException\InvalidClientException $e)
     {
-      return $this->catchError($e, 101);
+      return $this->catchError($e, 111);
     }
     catch(LeagueException\UnsupportedGrantTypeException $e)
     {
-      return $this->catchError($e, 102);
+      return $this->catchError($e, 112);
     }
     catch(LeagueException\InvalidScopeException $e)
     {
-      return $this->catchError($e, 103);
+      return $this->catchError($e, 113);
     }
     catch(LeagueException\InvalidRequestException $e)
     {
-      return $this->catchError($e, 104);
+      return $this->catchError($e, 114);
     }
     catch(LeagueException\OAuthException $e)
     {
@@ -54,12 +54,12 @@ class OauthController extends ApiController
     {
       return $this->respond->error([
         'title' => $e->getMessage(),
-        'code' => 110
+        'code' => 120
       ], 401);
     }
     catch(LeagueException\InvalidRequestException $e)
     {
-      return $this->catchError($e, 111);
+      return $this->catchError($e, 121);
     }
     catch(LeagueException\OAuthException $e)
     {

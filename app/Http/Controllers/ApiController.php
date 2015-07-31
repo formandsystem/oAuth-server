@@ -1,8 +1,8 @@
 <?php namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-use LucaDegasperi\OAuth2Server\Authorizer;
 use League\OAuth2\Server\Exception as LeagueException;
+use LucaDegasperi\OAuth2Server\Authorizer;
 use App\Http\Respond;
 use Illuminate\Http\Request;
 
@@ -18,41 +18,19 @@ class ApiController extends BaseController
     $this->authorizer = $authorizer;
   }
 
-  function index(){
-    return $this->respond->error([
-      'code' => 100,
-      'title' => 'Invalid endpoint',
-      'detail' => 'A resource is required in the url'
-    ], 404);
-
-  }
   /*
-   * path: /jsonapi
+   * check scopes
    *
-   * get jsonapi version
+   * catch if acces_token has scopes
    */
-  function jsonapi()
+  protected function hasScopes($scopes)
   {
-    return $this->respond->ok([
-      'jsonapi' => [
-        'version' => '1.0'
-      ]
-    ]);
-  }
-
-    /*
-     * check scopes
-     *
-     * catch if acces_token has scopes
-     */
-    protected function hasScopes($scopes)
+    if( $this->authorizer->hasScope($scopes) === false )
     {
-      if( $this->authorizer->hasScope($scopes) === false )
-      {
-        throw new LeagueException\AccessDeniedException();
-      }
-      return true;
+      throw new LeagueException\AccessDeniedException();
     }
+    return true;
+  }
 
   /*
    * catchError
