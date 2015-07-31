@@ -44,5 +44,32 @@ class ApiController extends BaseController
       'code' => $code
     ], 400);
   }
+  /*
+   * catchException
+   *
+   * catch a generic error
+   */
+  protected function catchException($e)
+  {
+    if( $e->errorType === 'access_denied' )
+    {
+      return $this->respond->AuthenticationFailed([
+        'description' => $e->getMessage(),
+        'code' => 110
+      ]);
+    }
+    elseif( $e->errorType === 'access_denied' )
+    {
+
+    }
+    // catch(LeagueException\InvalidRequestException $e)
+    // {
+    //   return $this->catchError($e, 104);
+    // }
+    // catch(LeagueException\OAuthException $e)
+    // {
+    //   return $this->catchError($e);
+    // }
+  }
 
 }

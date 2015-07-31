@@ -54,20 +54,9 @@ class ClientController extends ApiController
         ]
       ]);
     }
-    catch(LeagueException\AccessDeniedException $e)
+    catch( \Exception $e )
     {
-      return $this->respond->AuthenticationFailed([
-        'title' => $e->getMessage(),
-        'code' => 110
-      ]);
-    }
-    catch(LeagueException\InvalidRequestException $e)
-    {
-      return $this->catchError($e, 104);
-    }
-    catch(LeagueException\OAuthException $e)
-    {
-      return $this->catchError($e);
+      return $this->catchException($e);
     }
   }
 
