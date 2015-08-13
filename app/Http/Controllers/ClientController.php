@@ -35,14 +35,14 @@ class ClientController extends ApiController
       {
         if(in_array($scope->scope_id, $configScopes['client']) )
         {
-          return $this->respond->forbidden([
+          return $this->respond->error([
             'description' => 'You are not allowed to view this user.',
             'code' => 106
-          ]);
+          ], 403);
         }
       }
 
-      return $this->respond->ok(['data' =>
+      return $this->respond->success(['data' =>
         [
           'id' => $client->id,
           'type' => 'client',
@@ -52,7 +52,7 @@ class ClientController extends ApiController
             'secret' => $client->secret
           ]
         ]
-      ]);
+      ],200);
     }
     catch( \Exception $e )
     {
@@ -76,11 +76,11 @@ class ClientController extends ApiController
 
       $client = ['id' => 'abs'];
 
-      return $this->respond->created(['data' =>
+      return $this->respond->success(['data' =>
         [
 
         ]
-      ], url('/client/'.$client['id']) );
+      ], url('/client/'.$client['id']), 201);
     }
     catch( \Exception $e )
     {

@@ -41,47 +41,47 @@ class ApiController extends BaseController
     if( !isset($e->errorType) )
     {
       app()->make('Psr\Log\LoggerInterface')->error($e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
-      return $this->respond->internal();
+      return $this->respond->error([], 500);
     }
     elseif( $e->errorType === 'access_denied' )
     {
-      return $this->respond->authenticationFailed([
+      return $this->respond->error([
         'description' => $e->getMessage(),
         'code' => 110
-      ]);
+      ], 401);
     }
     elseif( $e->errorType === 'invalid_client' )
     {
-      return $this->respond->authenticationFailed([
+      return $this->respond->error([
         'description' => $e->getMessage(),
         'code' => 111
-      ]);
+      ], 401);
     }
     elseif( $e->errorType === 'unsupported_grant_type' )
     {
-      return $this->respond->badRequest([
+      return $this->respond->error([
         'description' => $e->getMessage(),
         'code' => 112
-      ]);
+      ], 400);
     }
     elseif( $e->errorType === 'invalid_scope' )
     {
-      return $this->respond->badRequest([
+      return $this->respond->error([
         'description' => $e->getMessage(),
         'code' => 113
-      ]);
+      ], 400);
     }
     elseif( $e->errorType === 'invalid_request' )
     {
-      return $this->respond->badRequest([
+      return $this->respond->error([
         'description' => $e->getMessage(),
         'code' => 114
-      ]);
+      ], 400);
     }
     else {
-      return $this->respond->badRequest([
+      return $this->respond->error([
         'description' => $e->getMessage()
-      ]);
+      ], 400);
     }
   }
 

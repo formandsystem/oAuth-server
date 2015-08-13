@@ -49,9 +49,12 @@ class Respond{
      *
      * @return void
      */
-    public function setStatus($status)
+    public function setStatus($statusCode)
     {
-      $this->status = $status;
+      if(!is_int($statusCode) || strlen($statusCode) !== 3){
+        throw new InvalidArgumentException('An error code needs to be provided.');
+      }
+      $this->status = $statusCode;
     }
 
     /*
@@ -111,7 +114,6 @@ class Respond{
 
       return $this->response;
     }
-
     /*
      * respond with error
      *
@@ -121,12 +123,14 @@ class Respond{
      *
      * @return Illuminate\Http\Response
      */
-    public function error($data = [])
+    public function error($data = [], $statusCode)
     {
+      $this->setStatus($statusCode);
+
       $error = array_merge(
         [
           'status' => $this->getStatus(),
-          'title' => $this->httpstatus->text($this->getStatus())
+          'title' => $this->httpstatus->getReasonPhrase($this->getStatus())
         ],
         $data
       );
@@ -146,90 +150,6 @@ class Respond{
         ]);
     }
     /*
-     * respond with badRequest
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function badRequest($data)
-    {
-      $this->setStatus(400);
-      return $this->error($data);
-    }
-    /*
-     * respond with AuthenticationFailed
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function authenticationFailed($data)
-    {
-      $this->setStatus(401);
-      return $this->error($data);
-    }
-    /*
-     * respond with forbidden
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function forbidden($data)
-    {
-      $this->setStatus(403);
-      return $this->error($data);
-    }
-    /*
-     * respond with notFound
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function notFound($data)
-    {
-      $this->setStatus(404);
-      return $this->error($data);
-    }
-    /*
-     * respond with NotAcceptable
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function NotAcceptable($data)
-    {
-      $this->setStatus(406);
-      return $this->error($data);
-    }
-    /*
-     * respond with NotAcceptable
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function UnsupportedMediaType($data)
-    {
-      $this->setStatus(415);
-      return $this->error($data);
-    }
-    /*
-     * respond with internal
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function internal($data = [])
-    {
-      $this->setStatus(500);
-      return $this->error($data);
-    }
-    /*
      * respond with Data
      *
      * @method withData
@@ -238,52 +158,19 @@ class Respond{
      *
      * @return Illuminate\Http\Response
      */
-    public function withData($data)
+    public function success($data = null, $statusCode)
     {
-      $data = array_merge([
-          "jsonapi" => ["version" => "1.0"]
-        ], $data
-      );
+      $this->setStatus($statusCode);
+
+      if( $data !== null )
+      {
+        $data = array_merge([
+            "jsonapi" => ["version" => "1.0"]
+          ], $data
+        );
+      }
 
       return $this->respond($data);
-    }
-
-    /*
-     * respond ok
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function ok($data)
-    {
-      $this->setStatus(200);
-
-      return $this->withData($data);
-    }
-    /*
-     * respond created
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function created($data, $location)
-    {
-      $this->setStatus(201);
-      $this->addHeader('Location', $location);
-
-      return $this->withData($data, $this->getStatus());
-    }
-
-    /*
-     * respond noContent
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function noContent()
-    {
-      $this->setStatus(204);
-
-      return $this->respond(null, $this->getStatus());
     }
 
 }

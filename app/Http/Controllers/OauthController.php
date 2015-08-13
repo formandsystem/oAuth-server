@@ -12,7 +12,7 @@ class OauthController extends ApiController
   {
     try{
       $token = $this->authorizer->issueAccessToken();
-      return $this->respond->ok(
+      return $this->respond->success(
         ['data' =>
           [
             'id' => $token['access_token'],
@@ -21,7 +21,8 @@ class OauthController extends ApiController
               $token
             ]
           ]
-        ]
+        ],
+        200
       );
     }
     catch(\Exception $e)
@@ -39,7 +40,7 @@ class OauthController extends ApiController
       $scopes = array_map('trim',explode(',',$this->request->input('scope')));
       $this->hasScopes($scopes);
 
-      return $this->respond->noContent();
+      return $respond->success(null,204);
     }
     catch(\Exception $e)
     {

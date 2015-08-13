@@ -17,10 +17,10 @@ $respond = $app->make('App\Http\Respond');
  * error handling for missing resource
  */
 $app->get('/', function() use ($respond){
-  return $respond->notFound([
+  return $respond->error([
     'code' => 100,
     'title' => 'Invalid endpoint'
-  ]);
+  ], 404);
 });
 
 /*
@@ -29,15 +29,15 @@ $app->get('/', function() use ($respond){
  * get an access token using a client_id and client_secret
  */
 $app->get('jsonapi', ['middleware' => 'RequestHeader:OPTIONS;GET', function() use ($respond){
-  return $respond->ok([
+  return $respond->success([
     'jsonapi' => [
       'version' => '1.0'
     ]
-  ]);
+  ], 200);
 }]);
 
 $app->options('jsonapi', ['middleware' => 'RequestHeader:OPTIONS;GET', function() use ($respond){
-  return $respond->noContent();
+  return $respond->success(null,204);
 }]);
 /*
  * path: /access_token
@@ -47,7 +47,7 @@ $app->options('jsonapi', ['middleware' => 'RequestHeader:OPTIONS;GET', function(
 $app->post('access_token', 'OauthController@getAccessToken');
 
 $app->options('access_token', ['middleware' => 'RequestHeader:OPTIONS;POST', function() use ($respond){
-  return $respond->noContent();
+  return $respond->success(null,204);
 }]);
 /*
  * path: /validate_token
@@ -57,18 +57,18 @@ $app->options('access_token', ['middleware' => 'RequestHeader:OPTIONS;POST', fun
 $app->post('validate_token', 'OauthController@validateAccessToken');
 
 $app->options('validate_token', ['middleware' => 'RequestHeader:OPTIONS;POST', function() use ($respond){
-  return $respond->noContent();
+  return $respond->success(null,204);
 }]);
 /*
  * path: /client
  */
 $app->options('client', ['middleware' => 'RequestHeader:OPTIONS;POST,Credentials', function() use ($respond){
-  return $respond->noContent();
+  return $respond->success(null,204);
 }]);
 
 $app->options('client/{id}', function() use ($respond){
   $respond->addHeader('Allow','GET,POST,PUT,DELETE,OPTIONS');
-  return $respond->noContent();
+  return $respond->success(null,204);
 });
 
 $app->get('client/{id}', 'ClientController@show');
