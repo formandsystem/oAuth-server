@@ -28,7 +28,7 @@ $app->get('/', function() use ($respond){
  *
  * get an access token using a client_id and client_secret
  */
-$app->get('jsonapi', ['middleware' => 'RequestHeader:GET;OPTIONS', function() use ($respond){
+$app->get('jsonapi', ['middleware' => 'RequestHeader:OPTIONS;GET', function() use ($respond){
   return $respond->ok([
     'jsonapi' => [
       'version' => '1.0'
@@ -36,10 +36,9 @@ $app->get('jsonapi', ['middleware' => 'RequestHeader:GET;OPTIONS', function() us
   ]);
 }]);
 
-$app->options('jsonapi', function() use ($respond){
-  $respond->addHeader('Allow','GET,OPTIONS');
+$app->options('jsonapi', ['middleware' => 'RequestHeader:OPTIONS;GET', function() use ($respond){
   return $respond->noContent();
-});
+}]);
 /*
  * path: /access_token
  *
@@ -47,10 +46,9 @@ $app->options('jsonapi', function() use ($respond){
  */
 $app->post('access_token', 'OauthController@getAccessToken');
 
-$app->options('access_token', function() use ($respond){
-  $respond->addHeader('Allow','POST,OPTIONS');
+$app->options('access_token', ['middleware' => 'RequestHeader:OPTIONS;POST', function() use ($respond){
   return $respond->noContent();
-});
+}]);
 /*
  * path: /validate_token
  *
@@ -58,16 +56,21 @@ $app->options('access_token', function() use ($respond){
  */
 $app->post('validate_token', 'OauthController@validateAccessToken');
 
-$app->options('validate_token', function() use ($respond){
-  $respond->addHeader('Allow','POST,OPTIONS');
+$app->options('validate_token', ['middleware' => 'RequestHeader:OPTIONS;POST', function() use ($respond){
   return $respond->noContent();
-});
+}]);
 /*
  * path: /client
  */
+$app->options('client', ['middleware' => 'RequestHeader:OPTIONS;POST,Credentials', function() use ($respond){
+  return $respond->noContent();
+}]);
+
 $app->options('client/{id}', function() use ($respond){
   $respond->addHeader('Allow','GET,POST,PUT,DELETE,OPTIONS');
   return $respond->noContent();
 });
 
 $app->get('client/{id}', 'ClientController@show');
+
+$app->post('client', 'ClientController@create');

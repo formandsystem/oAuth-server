@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class ApiController extends BaseController
 {
   protected $respond;
-
+  protected $request;
   protected $authorizer;
 
   function __construct(Respond $respond, Request $request, Authorizer $authorizer){
@@ -31,19 +31,6 @@ class ApiController extends BaseController
     }
     return true;
   }
-
-  /*
-   * catchError
-   *
-   * catch a generic error
-   */
-  protected function catchError($e, $code = null)
-  {
-    return $this->respond->error([
-      'title' => $e->getMessage(),
-      'code' => $code
-    ], 400);
-  }
   /*
    * catchException
    *
@@ -51,25 +38,51 @@ class ApiController extends BaseController
    */
   protected function catchException($e)
   {
-    if( $e->errorType === 'access_denied' )
+    if( !isset($e->errorType) )
     {
-      return $this->respond->AuthenticationFailed([
+      app()->make('Psr\Log\LoggerInterface')->error($e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
+      return $this->respond->internal();
+    }
+    elseif( $e->errorType === 'access_denied' )
+    {
+      return $this->respond->authenticationFailed([
         'description' => $e->getMessage(),
         'code' => 110
       ]);
     }
-    elseif( $e->errorType === 'access_denied' )
+    elseif( $e->errorType === 'invalid_client' )
     {
-
+      return $this->respond->authenticationFailed([
+        'description' => $e->getMessage(),
+        'code' => 111
+      ]);
     }
-    // catch(LeagueException\InvalidRequestException $e)
-    // {
-    //   return $this->catchError($e, 104);
-    // }
-    // catch(LeagueException\OAuthException $e)
-    // {
-    //   return $this->catchError($e);
-    // }
+    elseif( $e->errorType === 'unsupported_grant_type' )
+    {
+      return $this->respond->badRequest([
+        'description' => $e->getMessage(),
+        'code' => 112
+      ]);
+    }
+    elseif( $e->errorType === 'invalid_scope' )
+    {
+      return $this->respond->badRequest([
+        'description' => $e->getMessage(),
+        'code' => 113
+      ]);
+    }
+    elseif( $e->errorType === 'invalid_request' )
+    {
+      return $this->respond->badRequest([
+        'description' => $e->getMessage(),
+        'code' => 114
+      ]);
+    }
+    else {
+      return $this->respond->badRequest([
+        'description' => $e->getMessage()
+      ]);
+    }
   }
 
 }

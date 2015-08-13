@@ -2,20 +2,20 @@
 
 use App\Http\Controllers\ApiController as ApiController;
 use League\OAuth2\Server\Exception as LeagueException;
-use LucaDegasperi\OAuth2Server\Storage\FluentClient;
 use LucaDegasperi\OAuth2Server\Authorizer;
 use App\Http\Respond;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ClientController extends ApiController
 {
 
   protected $clientRepository;
 
-  function __construct(Respond $respond, Request $request, Authorizer $authorizer, FluentClient $clientRepo)
+  function __construct(Respond $respond, Request $request, Authorizer $authorizer )
   {
     parent::__construct($respond, $request, $authorizer);
-    $this->clientRepository = $clientRepo;
+    $this->db = app('db');
   }
 
   /*
@@ -28,15 +28,15 @@ class ClientController extends ApiController
       $this->hasScopes(['client.read']);
       $configScopes = config('config.scopes');
 
-      $client = app('db')->table('oauth_clients')->where('id',$id)->first();
+      $client = $this->db->table('oauth_clients')->where('id',$id)->first();
 
-      $scopes = app('db')->table('oauth_client_scopes')->where('client_id',$id)->get();
+      $scopes = $this->db->table('oauth_client_scopes')->where('client_id',$id)->get();
       foreach($scopes as $scope)
       {
         if(in_array($scope->scope_id, $configScopes['client']) )
         {
           return $this->respond->forbidden([
-            'title' => 'You are not allowed to view this user',
+            'description' => 'You are not allowed to view this user.',
             'code' => 106
           ]);
         }
@@ -59,5 +59,34 @@ class ClientController extends ApiController
       return $this->catchException($e);
     }
   }
+
+  function create()
+  {
+    try{
+      $this->authorizer->validateAccessToken(true);
+      $this->hasScopes(['client.create']);
+      $now = Carbon::now()->toDateTimeString();
+      $this->db->table('oauth_clients')->insert([
+        'id' => 'A',
+        'secret' => 'B',
+        'name' => 'C',
+        'created_at' => $now,
+        'updated_At' => $now
+      ]);
+
+      $client = ['id' => 'abs'];
+
+      return $this->respond->created(['data' =>
+        [
+
+        ]
+      ], url('/client/'.$client['id']) );
+    }
+    catch( \Exception $e )
+    {
+      return $this->catchException($e);
+    }
+  }
+
 
 }

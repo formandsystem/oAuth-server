@@ -11,31 +11,22 @@ class OauthController extends ApiController
   function getAccessToken()
   {
     try{
+      $token = $this->authorizer->issueAccessToken();
       return $this->respond->ok(
-        ['meta' =>
-          $this->authorizer->issueAccessToken()
+        ['data' =>
+          [
+            'id' => $token['access_token'],
+            'type' => 'access_token',
+            'attributes' => [
+              $token
+            ]
+          ]
         ]
       );
     }
-    catch(LeagueException\InvalidClientException $e)
+    catch(\Exception $e)
     {
-      return $this->catchError($e, 111);
-    }
-    catch(LeagueException\UnsupportedGrantTypeException $e)
-    {
-      return $this->catchError($e, 112);
-    }
-    catch(LeagueException\InvalidScopeException $e)
-    {
-      return $this->catchError($e, 113);
-    }
-    catch(LeagueException\InvalidRequestException $e)
-    {
-      return $this->catchError($e, 114);
-    }
-    catch(LeagueException\OAuthException $e)
-    {
-      return $this->catchError($e);
+      return $this->catchException($e);
     }
   }
   /*
@@ -50,20 +41,9 @@ class OauthController extends ApiController
 
       return $this->respond->noContent();
     }
-    catch(LeagueException\AccessDeniedException $e)
+    catch(\Exception $e)
     {
-      return $this->respond->error([
-        'title' => $e->getMessage(),
-        'code' => 120
-      ], 401);
-    }
-    catch(LeagueException\InvalidRequestException $e)
-    {
-      return $this->catchError($e, 121);
-    }
-    catch(LeagueException\OAuthException $e)
-    {
-      return $this->catchError($e);
+      return $this->catchException($e);
     }
   }
 
