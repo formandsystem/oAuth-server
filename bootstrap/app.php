@@ -67,10 +67,11 @@ $app->middleware([
 
 $app->routeMiddleware([
 			'check-authorization-params' => 'LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware',
-			'RequestHeader' => 'App\Http\Middleware\RequestHeaderMiddleware',
 			'csrf' => 'Laravel\Lumen\Http\Middleware\VerifyCsrfToken',
 			'oauth' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware',
-			'oauth-owner' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthOwnerMiddleware'
+			'oauth-owner' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthOwnerMiddleware',
+			'RequestHeader' => 'App\Http\Middleware\RequestHeaderMiddleware',
+			'ContentHeaders' => 'App\Http\Middleware\ContentHeadersMiddleware',
 ]);
 
 /*

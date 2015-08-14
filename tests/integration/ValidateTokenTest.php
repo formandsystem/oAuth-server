@@ -5,7 +5,6 @@ class ValidateTokenTest extends BasetestCase
     /**
      * Get /
      *
-     * @return void
      */
     public function testOptionsValidateToken()
     {

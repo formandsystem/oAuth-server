@@ -5,7 +5,6 @@ class ClientTest extends BasetestCase
     /**
      * OPTIONS /client
      *
-     * @return void
      */
     public function testOptionsClient()
     {
@@ -17,11 +16,10 @@ class ClientTest extends BasetestCase
     /**
      * POST /client
      *
-     * @return void
      */
     public function testPostClient()
     {
-        $response = $this->call('POST', '/client');
+        $response = $this->call('POST', '/client', [], [], [], ['HTTP_Accept' => 'application/json']);
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
         $this->assertEquals(204, $response->status());
@@ -29,11 +27,10 @@ class ClientTest extends BasetestCase
     /**
      * POST /client
      *
-     * @return void
      */
     public function testGetClientById()
     {
-        $response = $this->call('GET', '/client/1');
+        $response = $this->call('GET', '/client/1', [], [], [], ['HTTP_Accept' => 'application/json']);
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
         $this->assertEquals(204, $response->status());
