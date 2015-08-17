@@ -16,24 +16,14 @@ $respond = $app->make('App\Http\Respond');
  *
  * error handling for missing resource
  */
-$app->get('/', function() use ($respond){
-  return $respond->error([
-    'code' => 100,
-    'title' => 'Invalid endpoint'
-  ], 404);
-});
-
+$app->get('/', 'JsonapiController@index');
 /*
  * path: /jsonapi
  *
  * get an access token using a client_id and client_secret
  */
 $app->get('jsonapi', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;GET'], function(Request $request) use ($respond){
-  return $respond->success([
-    'jsonapi' => [
-      'version' => '1.0'
-    ]
-  ], 200);
+
 }]);
 
 $app->options('jsonapi', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;GET'], function() use ($respond){

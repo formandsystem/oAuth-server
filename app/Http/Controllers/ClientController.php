@@ -24,7 +24,10 @@ class ClientController extends ApiController
   function show($id)
   {
     try{
-      $this->authorizer->validateAccessToken(true);
+
+      $token = str_replace('Bearer ','',$this->request->header('authorizer'));
+
+      $this->authorizer->validateAccessToken(false, $token);
       $this->hasScopes(['client.read']);
       $configScopes = config('config.scopes');
 
@@ -63,24 +66,31 @@ class ClientController extends ApiController
   function create()
   {
     try{
-      $this->authorizer->validateAccessToken(true);
+      $token = str_replace('Bearer ','',$this->request->header('authorizer'));
+      $this->authorizer->validateAccessToken(false, $token);
       $this->hasScopes(['client.create']);
       $now = Carbon::now()->toDateTimeString();
-      $this->db->table('oauth_clients')->insert([
-        'id' => 'A',
-        'secret' => 'B',
-        'name' => 'C',
+
+      $clientData = [
+        'id' => 'client_created_by_test',
+        'secret' => 'secret',
+        'name' => 'client_created_by_test',
         'created_at' => $now,
         'updated_At' => $now
-      ]);
+      ];
 
-      $client = ['id' => 'abs'];
+      $this->db->table('oauth_clients')->insert($clientData);
+
 
       return $this->respond->success(['data' =>
         [
-
+          'id' => $clientData['id'],
+          'type' => 'client',
+          'attributes' => [
+            'secret' => $clientData['secret']
+          ]
         ]
-      ], url('/client/'.$client['id']), 201);
+      ], url('/client/'.$clientData['id']), 201);
     }
     catch( \Exception $e )
     {

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Response;
 use Lukasoppermann\Httpstatus\Httpstatus;
+use InvalidArgumentException;
 
 class Respond{
   // response
