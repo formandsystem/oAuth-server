@@ -1,43 +1,38 @@
 <?php
-use Symfony\Component\HttpFoundation\Request;
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
+
+
 $respond = $app->make('App\Http\Respond');
 /*
- * path: /
- *
- * error handling for missing resource
- */
-$app->get('/', 'JsonapiController@index');
+|--------------------------------------------------------------------------
+| /jsonapi
+|--------------------------------------------------------------------------
+| options
+*/
+$app->options('jsonapi', 'JsonapiController@optionsJsonApi');
+// get
+$app->get('jsonapi', 'JsonapiController@getJsonApi');
 /*
- * path: /jsonapi
- *
- * get an access token using a client_id and client_secret
- */
-$app->get('jsonapi', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;GET'], function(Request $request) use ($respond){
-
-}]);
-
-$app->options('jsonapi', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;GET'], function() use ($respond){
-  return $respond->success(null,204);
-}]);
+|--------------------------------------------------------------------------
+| /accesstoken
+|--------------------------------------------------------------------------
+| options
+*/
+$app->options('token', 'TokenController@optionsAccessToken');
+// create token
+$app->post('token', 'TokenController@createAccessToken');
+// options token
+$app->options('token/{token}', 'TokenController@optionsValidateToken');
+// validate token
+$app->get('token/{token}', 'TokenController@validateToken');
 /*
  * path: /access_token
  *
  * get an access token using a client_id and client_secret
  */
-$app->post('access_token', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;POST'], 'uses'=>'OauthController@getAccessToken']);
+$app->post('access_token', ['middleware' => ['ContentHeader', 'RequestHeader:OPTIONS;POST'], 'uses' => 'OauthController@getAccessToken']);
 
-$app->options('access_token', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;POST'], function() use ($respond){
-  return $respond->success(null,204);
+$app->options('access_token', ['middleware' => ['ContentHeader', 'RequestHeader:OPTIONS;POST'], function () use ($respond) {
+  return $respond->success(null, 204);
 }]);
 /*
  * path: /validate_token
@@ -46,23 +41,28 @@ $app->options('access_token', ['middleware' => ['ContentHeaders','RequestHeader:
  */
 $app->post('validate_token', 'OauthController@validateAccessToken');
 
-$app->options('validate_token', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;POST'], function() use ($respond){
-  return $respond->success(null,204);
+$app->options('validate_token', ['middleware' => ['ContentHeader', 'RequestHeader:OPTIONS;POST'], function () use ($respond) {
+  return $respond->success(null, 204);
 }]);
 /*
- * path: /client
- */
-$app->options('client', ['middleware' => ['ContentHeaders','RequestHeader:OPTIONS;POST'], function() use ($respond){
+|--------------------------------------------------------------------------
+| /client
+|--------------------------------------------------------------------------
+| options
+*/
+$app->options('client', ['middleware' => ['ContentHeader', 'RequestHeader:OPTIONS;POST'], function () use ($respond) {
   $respond->addHeader('Access-Control-Allow-Credentials', 'true');
-  return $respond->success(null,204);
-}]);
 
-$app->options('client/{id}', ['middleware' => ['ContentHeaders','RequestHeader:GET;POST;PUT;DELETE;OPTIONS'], function() use ($respond){
-  $respond->addHeader('Allow','GET,POST,PUT,DELETE,OPTIONS');
+  return $respond->success(null, 204);
+}]);
+// create client
+$app->post('client', ['middleware' => ['ContentHeader', 'RequestHeader'], 'uses' => 'ClientController@create']);
+// client/{id} options
+$app->options('client/{id}', ['middleware' => ['ContentHeader', 'RequestHeader:GET;POST;PUT;DELETE;OPTIONS'], function () use ($respond) {
+  $respond->addHeader('Allow', 'GET,POST,PUT,DELETE,OPTIONS');
   $respond->addHeader('Access-Control-Allow-Credentials', 'true');
-  return $respond->success(null,204);
+
+  return $respond->success(null, 204);
 }]);
-
-$app->get('client/{id}', ['middleware' => ['ContentHeaders','RequestHeader'], 'uses' => 'ClientController@show']);
-
-$app->post('client', ['middleware' => ['ContentHeaders','RequestHeader'], 'uses' => 'ClientController@create']);
+// get client/{id}
+$app->get('client/{id}', ['middleware' => ['ContentHeader', 'RequestHeader'], 'uses' => 'ClientController@show']);

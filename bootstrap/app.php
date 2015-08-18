@@ -71,7 +71,8 @@ $app->routeMiddleware([
 			'oauth' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware',
 			'oauth-owner' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthOwnerMiddleware',
 			'RequestHeader' => 'App\Http\Middleware\RequestHeaderMiddleware',
-			'ContentHeaders' => 'App\Http\Middleware\ContentHeadersMiddleware',
+			'ContentHeader' => 'App\Http\Middleware\ContentHeaderMiddleware',
+			'cors' => 'App\Http\Middleware\CorsMiddleware',
 ]);
 
 /*
