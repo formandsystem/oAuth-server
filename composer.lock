@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "da65d5e74667c207d4d9e2e95588927e",
+    "hash": "a65772175dac9dd9e51d87d8e673e4dc",
     "packages": [
         {
             "name": "danielstjules/stringy",
@@ -1484,16 +1484,16 @@
         },
         {
             "name": "lucadegasperi/oauth2-server-laravel",
-            "version": "dev-develop",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lucadegasperi/oauth2-server-laravel.git",
-                "reference": "c638589fe4cee9cef9c18ece8fbe2fce215a9e6d"
+                "reference": "8d78c31dea82e7714a414ae7707487ccd0c31828"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/c638589fe4cee9cef9c18ece8fbe2fce215a9e6d",
-                "reference": "c638589fe4cee9cef9c18ece8fbe2fce215a9e6d",
+                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/8d78c31dea82e7714a414ae7707487ccd0c31828",
+                "reference": "8d78c31dea82e7714a414ae7707487ccd0c31828",
                 "shasum": ""
             },
             "require": {
@@ -1516,7 +1516,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-develop": "5.0-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -1534,15 +1534,16 @@
                     "email": "packages@lucadegasperi.com"
                 }
             ],
-            "description": "Laravel wrapper for the OAuth 2.0 Server package league/oauth2-server.",
+            "description": "A OAuth 2.0 bridge for Laravel and Lumen",
             "keywords": [
                 "api",
                 "laravel",
+                "lumen",
                 "oauth",
                 "oauth2",
                 "server"
             ],
-            "time": "2015-08-03 15:43:48"
+            "time": "2015-08-06 14:51:07"
         },
         {
             "name": "lukasoppermann/http-status",
@@ -1554,7 +1555,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lukasoppermann/http-status/zipball/3cd58357f61f6954e99f46d53b17e46121e5162a",
+                "url": "https://api.github.com/repos/lukasoppermann/http-status/zipball/2ba0982d217c7dc1c0f119758e4c26ca828b7a2e",
                 "reference": "3cd58357f61f6954e99f46d53b17e46121e5162a",
                 "shasum": ""
             },
@@ -3847,7 +3848,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "lucadegasperi/oauth2-server-laravel": 20,
         "lukasoppermann/http-status": 20
     },
     "prefer-stable": false,

@@ -7,7 +7,7 @@
     "require": {
         "laravel/lumen-framework": "5.1.*",
         "vlucas/phpdotenv": "~1.0",
-        "lucadegasperi/oauth2-server-laravel": "5.0.*@dev",
+        "lucadegasperi/oauth2-server-laravel": "5.0.*",
         "lukasoppermann/http-status": "0.9.*@dev",
         "fabpot/php-cs-fixer": "^1.10"
     },
@@ -31,7 +31,8 @@
         ]
     },
     "scripts": {
-      "test": "vendor/bin/phpspec run -v -f pretty; vendor/bin/phpunit --stderr -v; vendor/bin/php-cs-fixer fix -v --diff --dry-run;"
+      "test": "vendor/bin/phpspec run -v -f pretty; vendor/bin/phpunit --stderr -v; vendor/bin/php-cs-fixer fix -v --diff --dry-run;",
+      "psr": "vendor/bin/php-cs-fixer fix -v --diff"
     },
     "config": {
         "preferred-install": "dist"
