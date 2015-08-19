@@ -2,7 +2,7 @@
 
 class ClientTest extends BasetestCase
 {
-    public function getAccessToken()
+    public function request_post_on_token()
     {
         return $this->call('POST', '/access_token', [
             'client_id' => 'test_cms_id',
@@ -28,7 +28,7 @@ class ClientTest extends BasetestCase
      */
     public function Create_a_client()
     {
-        $token = json_decode($this->getAccessToken()->getContent())->data->id;
+        $token = json_decode($this->request_post_on_token()->getContent())->data->id;
         $response = $this->call('POST', '/client', ['access_token' => $token], [], [], ['HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);
 
         $this->checkDefaultHeader($response);
@@ -41,7 +41,7 @@ class ClientTest extends BasetestCase
      */
     public function Get_a_client_by_id()
     {
-        $token = json_decode($this->getAccessToken()->getContent())->data->id;
+        $token = json_decode($this->request_post_on_token()->getContent())->data->id;
         $response = $this->call('GET', '/client/test_client_id', ['access_token' => $token], [], [], ['HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);
         // print_r($response);
         $this->checkDefaultHeader($response);

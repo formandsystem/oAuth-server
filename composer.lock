@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a65772175dac9dd9e51d87d8e673e4dc",
+    "hash": "846655398c7bf1ee97ee9263a38cedea",
     "packages": [
         {
             "name": "danielstjules/stringy",
@@ -1484,16 +1484,16 @@
         },
         {
             "name": "lucadegasperi/oauth2-server-laravel",
-            "version": "5.0.0",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lucadegasperi/oauth2-server-laravel.git",
-                "reference": "8d78c31dea82e7714a414ae7707487ccd0c31828"
+                "reference": "e12b5585fd78e9bb6c1df672891669d017411137"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/8d78c31dea82e7714a414ae7707487ccd0c31828",
-                "reference": "8d78c31dea82e7714a414ae7707487ccd0c31828",
+                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/e12b5585fd78e9bb6c1df672891669d017411137",
+                "reference": "e12b5585fd78e9bb6c1df672891669d017411137",
                 "shasum": ""
             },
             "require": {
@@ -1507,11 +1507,11 @@
                 "php": ">=5.5.9"
             },
             "require-dev": {
-                "henrikbjorn/phpspec-code-coverage": "~1.0",
-                "mockery/mockery": "~0.9",
+                "henrikbjorn/phpspec-code-coverage": "^1.0.1",
+                "mockery/mockery": "^0.9.4",
                 "orchestra/testbench": "3.1.*",
-                "phpspec/phpspec": "~2.0",
-                "phpunit/phpunit": "~4.0"
+                "phpspec/phpspec": "^2.2.1",
+                "phpunit/phpunit": "^4.7.6"
             },
             "type": "library",
             "extra": {
@@ -1532,9 +1532,13 @@
                 {
                     "name": "Luca Degasperi",
                     "email": "packages@lucadegasperi.com"
+                },
+                {
+                    "name": "Vincent Klaiber",
+                    "email": "hello@vinkla.com"
                 }
             ],
-            "description": "A OAuth 2.0 bridge for Laravel and Lumen",
+            "description": "An OAuth 2.0 bridge for Laravel and Lumen",
             "keywords": [
                 "api",
                 "laravel",
@@ -1543,7 +1547,7 @@
                 "oauth2",
                 "server"
             ],
-            "time": "2015-08-06 14:51:07"
+            "time": "2015-08-19 06:06:42"
         },
         {
             "name": "lukasoppermann/http-status",

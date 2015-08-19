@@ -5,17 +5,23 @@ use League\OAuth2\Server\Exception as LeagueException;
 use LucaDegasperi\OAuth2Server\Authorizer;
 use App\Http\Respond;
 use Illuminate\Http\Request;
+use Lukasoppermann\Httpstatus\Httpstatuscodes;
 
-class ApiController extends BaseController
-{
+class ApiController extends BaseController implements Httpstatuscodes{
+
   protected $respond;
   protected $request;
   protected $authorizer;
+
 
   function __construct(Respond $respond, Request $request, Authorizer $authorizer){
     $this->respond = $respond;
     $this->request = $request;
     $this->authorizer = $authorizer;
+    // middleware
+    // $this->middleware('ContentHeader');
+    // $this->middleware('RequestHeader');
+    $this->middleware('cors');
   }
 
   /*
