@@ -8,6 +8,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
+         stderr="true"
          syntaxCheck="false">
     <testsuites>
         <testsuite name="Application Test Suite">

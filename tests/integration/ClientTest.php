@@ -29,7 +29,7 @@ class ClientTest extends BasetestCase
     public function Create_a_client()
     {
         $token = json_decode($this->request_post_on_token()->getContent())->data->id;
-        $response = $this->call('POST', '/client', ['access_token' => $token], [], [], ['HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);
+        $response = $this->call('POST', '/client', ['access_token' => $token], [], [], ['HTTP_Content_Type' => 'application/json', 'HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);
 
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);

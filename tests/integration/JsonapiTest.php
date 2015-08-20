@@ -8,7 +8,6 @@ class JsonapiTest extends BasetestCase
     public function request_options_on_jsonapi()
     {
         $response = $this->call('OPTIONS', '/jsonapi', [], [], [], ['HTTP_Accept' => 'application/json'], []);
-
         $this->checkDefaultHeader($response, 'OPTIONS,GET');
         $this->assertEquals(204, $response->status());
     }

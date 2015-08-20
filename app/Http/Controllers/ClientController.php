@@ -1,102 +1,91 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\ApiController as ApiController;
-use League\OAuth2\Server\Exception as LeagueException;
-use LucaDegasperi\OAuth2Server\Authorizer;
 use App\Http\Respond;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use LucaDegasperi\OAuth2Server\Authorizer;
 
 class ClientController extends ApiController
 {
+    protected $clientRepository;
 
-  protected $clientRepository;
-
-  function __construct(Respond $respond, Request $request, Authorizer $authorizer )
-  {
-    parent::__construct($respond, $request, $authorizer);
-    $this->db = app('db');
-  }
+    public function __construct(Respond $respond, Request $request, Authorizer $authorizer)
+    {
+        parent::__construct($respond, $request, $authorizer);
+        $this->db = app('db');
+    }
 
   /*
    * get a client
    */
-  function show($id)
+  public function show($id)
   {
-    try{
+      try {
+          $token = str_replace('Bearer ', '', $this->request->header('authorizer'));
 
-      $token = str_replace('Bearer ','',$this->request->header('authorizer'));
+          $this->authorizer->validateAccessToken(false, $token);
+          $this->hasScopes(['client.read']);
+          $configScopes = config('config.scopes');
 
-      $this->authorizer->validateAccessToken(false, $token);
-      $this->hasScopes(['client.read']);
-      $configScopes = config('config.scopes');
+          $client = $this->db->table('oauth_clients')->where('id', $id)->first();
 
-      $client = $this->db->table('oauth_clients')->where('id',$id)->first();
-
-      $scopes = $this->db->table('oauth_client_scopes')->where('client_id',$id)->get();
-      foreach($scopes as $scope)
-      {
-        if(in_array($scope->scope_id, $configScopes['client']) )
-        {
-          return $this->respond->error([
+          $scopes = $this->db->table('oauth_client_scopes')->where('client_id', $id)->get();
+          foreach ($scopes as $scope) {
+              if (in_array($scope->scope_id, $configScopes['client'])) {
+                  return $this->respond->error([
             'description' => 'You are not allowed to view this user.',
-            'code' => 106
+            'code' => 106,
           ], 403);
-        }
-      }
+              }
+          }
 
-      return $this->respond->success(['data' =>
+          return $this->respond->success(['data' =>
         [
           'id' => $client->id,
           'type' => 'client',
           'attribtues' => [
             'id' => $client->id,
             'name' => $client->name,
-            'secret' => $client->secret
-          ]
-        ]
-      ],200);
-    }
-    catch( \Exception $e )
-    {
-      return $this->catchException($e);
-    }
+            'secret' => $client->secret,
+          ],
+        ],
+      ], 200);
+      } catch (\Exception $e) {
+          return $this->catchException($e);
+      }
   }
 
-  function create()
-  {
-    try{
-      $token = str_replace('Bearer ','',$this->request->header('authorizer'));
-      $this->authorizer->validateAccessToken(false, $token);
-      $this->hasScopes(['client.create']);
-      $now = Carbon::now()->toDateTimeString();
+    public function create()
+    {
+        try {
+            $token = str_replace('Bearer ', '', $this->request->header('authorizer'));
+            $this->authorizer->validateAccessToken(false, $token);
+            $this->hasScopes(['client.create']);
+            $now = Carbon::now()->toDateTimeString();
 
-      $clientData = [
+            $clientData = [
         'id' => 'client_created_by_test',
         'secret' => 'secret',
         'name' => 'client_created_by_test',
         'created_at' => $now,
-        'updated_At' => $now
+        'updated_At' => $now,
       ];
 
-      $this->db->table('oauth_clients')->insert($clientData);
+            $this->db->table('oauth_clients')->insert($clientData);
 
 
-      return $this->respond->success(['data' =>
+            return $this->respond->success(['data' =>
         [
           'id' => $clientData['id'],
           'type' => 'client',
           'attributes' => [
-            'secret' => $clientData['secret']
-          ]
-        ]
+            'secret' => $clientData['secret'],
+          ],
+        ],
       ], url('/client/'.$clientData['id']), 201);
+        } catch (\Exception $e) {
+            return $this->catchException($e);
+        }
     }
-    catch( \Exception $e )
-    {
-      return $this->catchException($e);
-    }
-  }
-
-
 }

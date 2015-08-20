@@ -5,9 +5,9 @@
 |--------------------------------------------------------------------------
 | options
 */
-$app->options('jsonapi', 'JsonapiController@optionsJsonApi');
+$app->options('jsonapi', ['middleware' => ['cors'], 'uses' => 'JsonapiController@optionsJsonApi']);
 // get
-$app->get('jsonapi', 'JsonapiController@getJsonApi');
+$app->get('jsonapi', ['middleware' => ['cors'], 'uses' => 'JsonapiController@getJsonApi']);
 /*
 |--------------------------------------------------------------------------
 | /accesstoken
@@ -22,35 +22,15 @@ $app->options('token/{token}', 'TokenController@optionsValidateToken');
 // validate token
 $app->get('token/{token}', 'TokenController@validateToken');
 /*
- * path: /access_token
- *
- * get an access token using a client_id and client_secret
- */
-$app->post('access_token', 'OauthController@getAccessToken');
-
-$app->options('access_token', function () {
-  // return $respond->success(null, 204);
-});
-/*
- * path: /validate_token
- *
- * validate an access token and return scopes
- */
-$app->post('validate_token', 'OauthController@validateAccessToken');
-
-$app->options('validate_token', function () {
-  // return $respond->success(null, 204);
-});
-/*
 |--------------------------------------------------------------------------
 | /client
 |--------------------------------------------------------------------------
 | options
 */
-$app->options('client','ClientController@options');
+$app->options('client', ['middleware' => ['cors'], 'uses' => 'ClientController@options']);
 // create client
-$app->post('client', 'ClientController@create');
+$app->post('client', ['middleware' => ['cors'], 'uses' => 'ClientController@create']);
 // client/{id} options
-$app->options('client/{id}', 'ClientController@itemOptions');
+$app->options('client/{id}', ['middleware' => ['cors'], 'uses' => 'ClientController@itemOptions']);
 // get client/{id}
-$app->get('client/{id}', 'ClientController@show');
+$app->get('client/{id}', ['middleware' => ['cors'], 'uses' => 'ClientController@show']);

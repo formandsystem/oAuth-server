@@ -1,30 +1,31 @@
 <?php namespace App\Http;
 
 use Illuminate\Http\Response;
-use Lukasoppermann\Httpstatus\Httpstatus;
 use InvalidArgumentException;
+use Lukasoppermann\Httpstatus\Httpstatus;
 
-class Respond{
-  // response
-  protected $response;
-  protected $request;
-  protected $httpstatus;
-  protected $status;
+class respond
+{
+    // response
+    protected $response;
+    protected $request;
+    protected $httpstatus;
+    protected $status;
   // make sure to include / at the end
-  protected $devUrl = "http://dev.formandsystem.com/";
+  protected $devUrl = 'http://dev.formandsystem.com/';
 
-  function __construct(Response $response, Httpstatus $httpstatus)
-  {
-    $this->response = $response;
-    $this->httpstatus = $httpstatus;
-  }
+    public function __construct(Response $response, Httpstatus $httpstatus)
+    {
+        $this->response = $response;
+        $this->httpstatus = $httpstatus;
+    }
 
     /*
      * set devUrl
      */
     public function setUrl($url)
     {
-      $this->devUrl = $url;
+        $this->devUrl = $url;
     }
 
     /*
@@ -32,7 +33,7 @@ class Respond{
      */
     public function getUrl()
     {
-      return $this->devUrl;
+        return $this->devUrl;
     }
 
     /*
@@ -42,7 +43,7 @@ class Respond{
      */
     public function getStatus()
     {
-      return $this->status;
+        return $this->status;
     }
 
     /*
@@ -52,10 +53,10 @@ class Respond{
      */
     public function setStatus($statusCode)
     {
-      if(!is_int($statusCode) || strlen($statusCode) !== 3){
-        throw new InvalidArgumentException('An error code needs to be provided.');
-      }
-      $this->status = $statusCode;
+        if (!is_int($statusCode) || strlen($statusCode) !== 3) {
+            throw new InvalidArgumentException('An error code needs to be provided.');
+        }
+        $this->status = $statusCode;
     }
 
     /*
@@ -66,9 +67,9 @@ class Respond{
      *
      * @return void
      */
-    public function addHeader( $type, $header )
+    public function addHeader($type, $header)
     {
-      $this->response->header($type, $header);
+        $this->response->header($type, $header);
     }
 
     /*
@@ -80,9 +81,9 @@ class Respond{
      *
      * @return string
      */
-    private function errorUrl( $errorCode )
+    private function errorUrl($errorCode)
     {
-      return $this->getUrl().'errors/#'.$errorCode;
+        return $this->getUrl().'errors/#'.$errorCode;
     }
 
     /*
@@ -94,9 +95,9 @@ class Respond{
      *
      * @return string
      */
-    private function infoUrl( $handle )
+    private function infoUrl($handle)
     {
-      return $this->getUrl().$handle;
+        return $this->getUrl().$handle;
     }
 
     /*
@@ -110,10 +111,10 @@ class Respond{
      */
     public function respond($data)
     {
-      $this->response->setContent($data);
-      $this->response->setStatusCode($this->getStatus());
+        $this->response->setContent($data);
+        $this->response->setStatusCode($this->getStatus());
 
-      return $this->response;
+        return $this->response;
     }
     /*
      * respond with error
@@ -126,28 +127,27 @@ class Respond{
      */
     public function error($data = [], $statusCode)
     {
-      $this->setStatus($statusCode);
+        $this->setStatus($statusCode);
 
-      $error = array_merge(
+        $error = array_merge(
         [
           'status' => $this->getStatus(),
-          'title' => $this->httpstatus->getReasonPhrase($this->getStatus())
+          'title' => $this->httpstatus->getReasonPhrase($this->getStatus()),
         ],
         $data
       );
 
-      if( array_key_exists('code', $error) && !is_null($error['code']) && is_int($error['code']) )
-      {
-        $error['links'] = [
-          'about' => $this->errorUrl($error['code'])
+        if (array_key_exists('code', $error) && !is_null($error['code']) && is_int($error['code'])) {
+            $error['links'] = [
+          'about' => $this->errorUrl($error['code']),
         ];
-      }
+        }
 
-      return $this->respond(
+        return $this->respond(
         ['errors' =>
           [
-            'error' => $error
-          ]
+            'error' => $error,
+          ],
         ]);
     }
     /*
@@ -161,17 +161,15 @@ class Respond{
      */
     public function success($data = null, $statusCode)
     {
-      $this->setStatus($statusCode);
+        $this->setStatus($statusCode);
 
-      if( $data !== null )
-      {
-        $data = array_merge([
-            "jsonapi" => ["version" => "1.0"]
+        if ($data !== null) {
+            $data = array_merge([
+            'jsonapi' => ['version' => '1.0'],
           ], $data
         );
-      }
+        }
 
-      return $this->respond($data);
+        return $this->respond($data);
     }
-
 }
