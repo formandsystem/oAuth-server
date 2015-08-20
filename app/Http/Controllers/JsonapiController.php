@@ -20,7 +20,7 @@ class JsonapiController extends ApiController
    */
   public function optionsJsonApi()
   {
-      $this->respond->addHeader('Access-Control-Allow-Methods', 'OPTIONS,GET');
+      header('Access-Control-Allow-Methods: OPTIONS,GET');
       return $this->respond->success(null, self::HTTP_NO_CONTENT);
   }
 }

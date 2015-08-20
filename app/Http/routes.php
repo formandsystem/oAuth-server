@@ -14,13 +14,13 @@ $app->get('jsonapi', ['middleware' => ['cors'], 'uses' => 'JsonapiController@get
 |--------------------------------------------------------------------------
 | options
 */
-$app->options('token', 'TokenController@optionsAccessToken');
+$app->options('token', ['middleware' => ['cors'], 'uses' => 'TokenController@optionsAccessToken']);
 // create token
-$app->post('token', 'TokenController@createAccessToken');
+$app->post('token', ['middleware' => ['cors:disabledContentType'], 'uses' => 'TokenController@createAccessToken']);
 // options token
-$app->options('token/{token}', 'TokenController@optionsValidateToken');
+$app->options('token/{token}', ['middleware' => ['cors'], 'uses' => 'TokenController@optionsValidateToken']);
 // validate token
-$app->get('token/{token}', 'TokenController@validateToken');
+$app->get('token/{token}', ['middleware' => ['cors:disabledContentType'], 'uses' => 'TokenController@validateToken']);
 /*
 |--------------------------------------------------------------------------
 | /client
