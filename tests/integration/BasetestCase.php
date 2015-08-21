@@ -8,6 +8,7 @@ class BasetestCase extends TestCase
     {
         $this->client = new GuzzleHttp\Client([
             'base_uri' => 'http://oauth.formandsystem.app',
+            'exceptions' => false,
         ]);
         parent::setUp();
     }
@@ -31,6 +32,6 @@ class BasetestCase extends TestCase
        */
       public function checkAuthHeader($response)
       {
-          $this->assertEquals('true', $response->headers->get('access-control-allow-credentials'));
+          $this->assertEquals('true', $response->getHeader('access-control-allow-credentials')[0]);
       }
 }

@@ -35,3 +35,5 @@ $app->post('client', ['middleware' => ['cors'], 'uses' => 'ClientController@crea
 $app->options('client/{id}', ['middleware' => ['cors'], 'uses' => 'ClientController@itemOptions']);
 // get client/{id}
 $app->get('client/{id}', ['middleware' => ['cors'], 'uses' => 'ClientController@show']);
+// delete client/{id}
+$app->delete('client/{id}', ['middleware' => ['cors'], 'uses' => 'ClientController@delete']);

@@ -7,9 +7,13 @@ class ValidateTokenTest extends BasetestCase
      */
     public function request_options_validate_token()
     {
-        $response = $this->call('OPTIONS', '/validate_token');
+        $response = $this->client->options('token/:token:', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
         $this->checkDefaultHeader($response);
 
-        $this->assertEquals(204, $response->status());
+        $this->assertEquals(204, $response->getStatusCode());
     }
 }

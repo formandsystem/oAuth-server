@@ -3,49 +3,66 @@
 class ClientTest extends BasetestCase
 {
     /**
-     * @test
+     * get a token.
      */
-    public function request_post_on_token()
+    public function getToken()
     {
-        return $this->call('POST', '/access_token', [
-            'client_id' => 'test_cms_id',
-            'client_secret' => 'test_cms_secret',
-            'grant_type' => 'client_credentials',
-            'scope' => 'client.read,client.create,client.delete,client.update',
-        ], [], [], ['HTTP_Accept' => 'application/json']);
+        return json_decode($this->client->post('token', [
+            'form_params' => [
+                'client_id' => 'test_cms_id',
+                'client_secret' => 'test_cms_secret',
+                'grant_type' => 'client_credentials',
+                'scope' => 'client.read,client.create,client.delete,client.update',
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ])->getBody()->getContents())->data->id;
     }
     /**
      * @test
      */
     public function request_options_of_client_route()
     {
-        $response = $this->call('OPTIONS', '/client');
+        $response = $this->client->options('client', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->assertEquals(204, $response->status());
+        $this->assertEquals(204, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function request_post_create_a_client()
     {
-        $token = json_decode($this->request_post_on_token()->getContent())->data->id;
-        $response = $this->call('POST', '/client', ['access_token' => $token], [], [], ['HTTP_Content_Type' => 'application/json', 'HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);
+        $response = $this->client->post('client', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorizer' => 'Bearer '.$this->getToken(),
+            ],
+        ]);
 
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->assertEquals(204, $response->status());
+        $this->assertEquals(204, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function request_get_client_by_id()
     {
-        $token = json_decode($this->request_post_on_token()->getContent())->data->id;
-        $response = $this->call('GET', '/client/test_client_id', ['access_token' => $token], [], [], ['HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);
+        $response = $this->client->get('client/test_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorizer' => 'Bearer '.$this->getToken(),
+            ],
+        ]);
         // print_r($response);
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->assertEquals(200, $response->status());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
