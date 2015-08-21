@@ -14,6 +14,6 @@ class ValidateTokenTest extends BasetestCase
         ]);
         $this->checkDefaultHeader($response);
 
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 }

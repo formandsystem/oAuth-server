@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 use InvalidArgumentException;
 use Lukasoppermann\Httpstatus\Httpstatus;
 
-class respond
+class Respond
 {
     // response
     protected $response;

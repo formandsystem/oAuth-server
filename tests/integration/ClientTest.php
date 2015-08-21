@@ -31,23 +31,42 @@ class ClientTest extends BasetestCase
         ]);
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_NO_CONTENT, $response->getStatusCode());
     }
     /**
      * @test
      */
-    public function request_post_create_a_client()
+    public function create_a_client()
     {
         $response = $this->client->post('client', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorizer' => 'Bearer '.$this->getToken(),
+                'Authorization' => 'Bearer '.$this->getToken(),
+            ],
+            'form_params' => [
+                'client_name' => 'created_by_test',
             ],
         ]);
 
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_CREATED, $response->getStatusCode());
+    }
+    /**
+     * @test
+     */
+    public function failed_create_a_client()
+    {
+        $response = $this->client->post('client', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer '.$this->getToken(),
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
     }
     /**
      * @test
@@ -63,6 +82,6 @@ class ClientTest extends BasetestCase
         // print_r($response);
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());
     }
 }

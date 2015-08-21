@@ -13,7 +13,7 @@ class JsonapiTest extends BasetestCase
             ],
         ]);
         $this->checkDefaultHeader($response, 'OPTIONS,GET');
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
     /**
@@ -27,7 +27,7 @@ class JsonapiTest extends BasetestCase
             ],
         ]);
         $this->checkDefaultHeader($response);
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());
         $this->assertEquals(json_decode($response->getBody()->getContents(), true), [
           'jsonapi' => [
             'version' => '1.0',

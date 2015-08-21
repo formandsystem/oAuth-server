@@ -30,7 +30,7 @@ $app->get('token/{token}', ['middleware' => ['cors:disabledContentType'], 'uses'
 */
 $app->options('client', ['middleware' => ['cors'], 'uses' => 'ClientController@options']);
 // create client
-$app->post('client', ['middleware' => ['cors'], 'uses' => 'ClientController@create']);
+$app->post('client', ['middleware' => ['cors:disabledContentType'], 'uses' => 'ClientController@create']);
 // client/{id} options
 $app->options('client/{id}', ['middleware' => ['cors'], 'uses' => 'ClientController@itemOptions']);
 // get client/{id}

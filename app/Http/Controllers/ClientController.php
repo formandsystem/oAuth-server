@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Respond;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 use LucaDegasperi\OAuth2Server\Authorizer;
 use Lukasoppermann\Httpstatus\Httpstatuscodes;
 
@@ -41,6 +42,7 @@ class ClientController extends ApiController implements Httpstatuscodes
 
             $client = $this->db->table('oauth_clients')->where('id', $id)->first();
 
+            // TODO: replace with hasScope ?
             $scopes = $this->db->table('oauth_client_scopes')->where('client_id', $id)->get();
             foreach ($scopes as $scope) {
                 if (in_array($scope->scope_id, $configScopes['client'])) {
@@ -72,17 +74,9 @@ class ClientController extends ApiController implements Httpstatuscodes
         try {
             $token = str_replace('Bearer ', '', $this->request->header('authorization'));
             $this->authorizer->validateAccessToken(true, $token);
-
             $this->hasScopes(['client.create']);
 
-            $now = Carbon::now()->toDateTimeString();
-            $clientData = [
-                'id' => 'client_created_by_test',
-                'secret' => 'secret',
-                'name' => 'client_created_by_test',
-                'created_at' => $now,
-                'updated_At' => $now,
-            ];
+            $clientData = $this->newClient($this->request->input('client_name'));
 
             $this->db->table('oauth_clients')->insert($clientData);
 
@@ -92,8 +86,11 @@ class ClientController extends ApiController implements Httpstatuscodes
                     'attributes' => [
                         'secret' => $clientData['secret'],
                     ],
+                    'links' => [
+                        'self' => url('/client/'.$clientData['id']),
+                    ],
                 ],
-            ], url('/client/'.$clientData['id']), self::HTTP_CREATED);
+            ], self::HTTP_CREATED);
         } catch (\Exception $e) {
             return $this->catchException($e);
         }
@@ -115,5 +112,48 @@ class ClientController extends ApiController implements Httpstatuscodes
         } catch (\Exception $e) {
             return $this->catchException($e);
         }
+    }
+
+    /*
+     * create a new client
+     */
+    public function newClient($name)
+    {
+        if (strlen(trim($name)) < 2) {
+            throw new InvalidArgumentException('Client name must be at least 2 Characters long.');
+        }
+
+        $now = Carbon::now()->toDateTimeString();
+        $client = $this->clientCredentials();
+
+        return [
+            'id' => $client['id'],
+            'secret' => $client['secret'],
+            'name' => $name,
+            'created_at' => $now,
+            'updated_At' => $now,
+        ];
+    }
+
+    /*
+     * create random client id & secret
+     */
+    public function clientCredentials()
+    {
+        // Get a whole bunch of random characters from the OS
+        $fp = fopen('/dev/urandom', 'rb');
+        $entropy = fread($fp, 32);
+        fclose($fp);
+        // Takes our binary entropy, and concatenates a string which represents the current time to the microsecond
+        $entropy .= uniqid(mt_rand(), true);
+        // Hash the binary entropy
+        $hash = hash('sha512', $entropy);
+        // Base62 Encode the hash, resulting in an 86 or 85 character string
+        $hash = gmp_strval(gmp_init($hash, 16), 62);
+
+        return [
+            'id' => substr($hash, 0, 32),
+            'secret' => substr($hash, 32, 48),
+        ];
     }
 }

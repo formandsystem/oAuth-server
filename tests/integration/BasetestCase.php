@@ -1,15 +1,20 @@
 <?php
 
-class BasetestCase extends TestCase
+use Lukasoppermann\Httpstatus\Httpstatus;
+use Lukasoppermann\Httpstatus\Httpstatuscodes;
+
+class BasetestCase extends TestCase implements Httpstatuscodes
 {
     protected $client;
+    protected $httpstatus;
 
     public function setUp()
     {
         $this->client = new GuzzleHttp\Client([
-            'base_uri' => 'http://oauth.formandsystem.app',
+            'base_uri' => env('TEST_BASE_URL'),
             'exceptions' => false,
         ]);
+        $this->httpstatus = new Httpstatus();
         parent::setUp();
     }
     /*
@@ -27,11 +32,20 @@ class BasetestCase extends TestCase
         }
     }
 
-      /*
-       * checks credentials header
-       */
-      public function checkAuthHeader($response)
-      {
-          $this->assertEquals('true', $response->getHeader('access-control-allow-credentials')[0]);
-      }
+    /*
+     * checks credentials header
+     */
+    public function checkAuthHeader($response)
+    {
+        $this->assertEquals('true', $response->getHeader('access-control-allow-credentials')[0]);
+    }
+
+    /*
+     * check status code
+     */
+    public function checkStatusCode($expectedCode, $responseCode)
+    {
+        $errorText = 'Expected: '.$expectedCode.' ('.$this->httpstatus->getReasonPhrase($expectedCode).') but received '.$responseCode.' ('.$this->httpstatus->getReasonPhrase($responseCode).')';
+        $this->assertEquals($expectedCode, $responseCode, $errorText);
+    }
 }
