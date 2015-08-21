@@ -2,6 +2,9 @@
 
 class ClientTest extends BasetestCase
 {
+    /**
+     * @test
+     */
     public function request_post_on_token()
     {
         return $this->call('POST', '/access_token', [
@@ -12,10 +15,9 @@ class ClientTest extends BasetestCase
         ], [], [], ['HTTP_Accept' => 'application/json']);
     }
     /**
-     * OPTIONS /client
      * @test
      */
-    public function Options_of_client_route()
+    public function request_options_of_client_route()
     {
         $response = $this->call('OPTIONS', '/client');
         $this->checkDefaultHeader($response);
@@ -23,10 +25,9 @@ class ClientTest extends BasetestCase
         $this->assertEquals(204, $response->status());
     }
     /**
-     * POST /client
      * @test
      */
-    public function Create_a_client()
+    public function request_post_create_a_client()
     {
         $token = json_decode($this->request_post_on_token()->getContent())->data->id;
         $response = $this->call('POST', '/client', ['access_token' => $token], [], [], ['HTTP_Content_Type' => 'application/json', 'HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);
@@ -36,10 +37,9 @@ class ClientTest extends BasetestCase
         $this->assertEquals(204, $response->status());
     }
     /**
-     * POST /client
      * @test
      */
-    public function Get_a_client_by_id()
+    public function request_get_client_by_id()
     {
         $token = json_decode($this->request_post_on_token()->getContent())->data->id;
         $response = $this->call('GET', '/client/test_client_id', ['access_token' => $token], [], [], ['HTTP_Accept' => 'application/json', 'HTTP_Authorizer' => 'Bearer '.$token]);

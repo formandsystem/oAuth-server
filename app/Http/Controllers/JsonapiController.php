@@ -1,6 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use App\Http\Controllers\ApiController as ApiController;
+namespace App\Http\Controllers;
 
 class JsonapiController extends ApiController
 {
@@ -21,6 +21,7 @@ class JsonapiController extends ApiController
   public function optionsJsonApi()
   {
       header('Access-Control-Allow-Methods: OPTIONS,GET');
+
       return $this->respond->success(null, self::HTTP_NO_CONTENT);
   }
 }

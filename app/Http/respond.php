@@ -1,4 +1,6 @@
-<?php namespace App\Http;
+<?php
+
+namespace App\Http;
 
 use Illuminate\Http\Response;
 use InvalidArgumentException;
@@ -144,8 +146,7 @@ class respond
         }
 
         return $this->respond(
-        ['errors' =>
-          [
+        ['errors' => [
             'error' => $error,
           ],
         ]);

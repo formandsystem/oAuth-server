@@ -1,6 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use App\Http\Controllers\ApiController as ApiController;
+namespace App\Http\Controllers;
 
 class OauthController extends ApiController
 {
@@ -11,9 +11,9 @@ class OauthController extends ApiController
   {
       try {
           $token = $this->authorizer->issueAccessToken();
+
           return $this->respond->success(
-        ['data' =>
-          [
+          ['data' => [
             'id' => $token['access_token'],
             'type' => 'access_token',
             'attributes' => [

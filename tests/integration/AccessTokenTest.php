@@ -2,32 +2,36 @@
 
 class AccessTokenTest extends BasetestCase
 {
-    /**
-     * OPTIONS /access_token
-     *
+    /*
+     * @test
      */
-    public function testOptionsAccessToken()
+    public function request_options_for_token()
     {
-        $response = $this->call('OPTIONS', '/access_token');
-        $this->checkDefaultHeader($response, 'OPTIONS,POST');
-
-        $this->assertEquals(204, $response->status());
+        $response = $this->client->options('token', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+        $this->checkDefaultHeader($response, 'OPTIONS, POST');
+        $this->assertEquals(204, $response->getStatusCode());
     }
     /**
-     * Post /access_token
-     *
-     * @return json
+     * @test
      */
-    public function testPostAccessToken()
+    public function request_post_to_token()
     {
-        $response = $this->call('POST', '/access_token', [
-        'client_id' => 'test_client_id',
-        'client_secret' => 'test_client_secret',
-        'grant_type' => 'client_credentials',
-        'scope' => 'content.read,client.read,client.create',
-      ], [], [], ['HTTP_Accept' => 'application/json']);
-        $this->checkDefaultHeader($response, 'OPTIONS,POST');
+        $response = $this->client->post('/token', ['form_params' => [
+            'client_id' => 'test_client_id',
+            'client_secret' => 'test_client_secret',
+            'grant_type' => 'client_credentials',
+            'scope' => 'content.read,client.read,client.create',
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+            ], ]
+        );
+        $this->checkDefaultHeader($response, 'POST');
 
-        $this->assertEquals(200, $response->status());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }

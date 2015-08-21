@@ -7,9 +7,13 @@ class JsonapiTest extends BasetestCase
      */
     public function request_options_on_jsonapi()
     {
-        $response = $this->call('OPTIONS', '/jsonapi', [], [], [], ['HTTP_Accept' => 'application/json'], []);
+        $response = $this->client->options('jsonapi', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
         $this->checkDefaultHeader($response, 'OPTIONS,GET');
-        $this->assertEquals(204, $response->status());
+        $this->assertEquals(204, $response->getStatusCode());
     }
 
     /**
@@ -17,11 +21,14 @@ class JsonapiTest extends BasetestCase
      */
     public function request_get_on_jsonapi()
     {
-        $response = $this->call('GET', '/jsonapi', [], [], [], ['HTTP_Accept' => 'application/json']);
+        $response = $this->client->get('jsonapi', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
         $this->checkDefaultHeader($response);
-
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals($response->getOriginalContent(), [
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(json_decode($response->getBody()->getContents(), true), [
           'jsonapi' => [
             'version' => '1.0',
           ],

@@ -1,7 +1,7 @@
-<?php namespace App\Services;
+<?php
 
-use Lukasoppermann\Httpstatus\Httpstatus;
+namespace App\Services;
 
-class ResponseService{
-
+class ResponseService
+{
 }

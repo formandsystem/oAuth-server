@@ -25,7 +25,7 @@ class CorsMiddleware implements Httpstatuscodes
       $acceptHeader = config('config.contentTypeDefault');
 
       if ($request->getMethod() !== 'OPTIONS') {
-            // check accept header
+          // check accept header
             try {
                 $acceptHeader = $request->headers->get('Accept');
                 $this->checkAcceptHeader($acceptHeader);
@@ -64,7 +64,7 @@ class CorsMiddleware implements Httpstatuscodes
    */
   public function checkAcceptHeader($acceptHeader)
   {
-      if (strpos($acceptHeader, ';') || ($acceptHeader !== null && !array_key_exists($acceptHeader, config('config.contentTypes')))) {
+      if (strpos($acceptHeader, ';') || ($acceptHeader !== '' && !array_key_exists($acceptHeader, config('config.contentTypes')))) {
           throw new UnsupportedAcceptHeaderException('Unsupported Accept Header',
              self::HTTP_NOT_ACCEPTABLE,
              new JsonapiError([
@@ -82,7 +82,7 @@ class CorsMiddleware implements Httpstatuscodes
    */
   public function checkContentHeader($contentHeader)
   {
-      if (strpos($contentHeader, ';') || ($contentHeader !== null && !array_key_exists($contentHeader, config('config.contentTypes')))) {
+      if (strpos($contentHeader, ';') || ($contentHeader !== '' && !array_key_exists($contentHeader, config('config.contentTypes')))) {
           throw new UnsupportedMediaTypeException('Unsupported Media Type in content type header',
                  self::HTTP_UNSUPPORTED_MEDIA_TYPE,
                  new JsonapiError([

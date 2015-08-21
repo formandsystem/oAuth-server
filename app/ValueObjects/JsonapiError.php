@@ -1,4 +1,6 @@
-<?php namespace App\ValueObjects;
+<?php
+
+namespace App\ValueObjects;
 
 class JsonapiError extends AbstractValueObject
 {

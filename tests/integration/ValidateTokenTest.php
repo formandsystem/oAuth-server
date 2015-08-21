@@ -3,10 +3,9 @@
 class ValidateTokenTest extends BasetestCase
 {
     /**
-     * Get /
-     *
+     * @test
      */
-    public function testOptionsValidateToken()
+    public function request_options_validate_token()
     {
         $response = $this->call('OPTIONS', '/validate_token');
         $this->checkDefaultHeader($response);

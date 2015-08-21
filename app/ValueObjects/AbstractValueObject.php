@@ -1,4 +1,6 @@
-<?php namespace App\ValueObjects;
+<?php
+
+namespace App\ValueObjects;
 
 use InvalidArgumentException;
 
@@ -36,6 +38,7 @@ abstract class AbstractValueObject
         if (is_string($this->value)) {
             return $this->value;
         }
+
         return json_encode($this->value);
     }
 }

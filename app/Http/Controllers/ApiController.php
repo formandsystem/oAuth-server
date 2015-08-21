@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Http\Respond;
 use Illuminate\Http\Request;
@@ -13,28 +15,27 @@ class ApiController extends BaseController implements Httpstatuscodes
     protected $request;
     protected $authorizer;
 
-
     public function __construct(Respond $respond, Request $request, Authorizer $authorizer)
     {
         $this->respond = $respond;
         $this->request = $request;
         $this->authorizer = $authorizer;
-    // middleware
-    // $this->middleware('cors');
     }
 
-  /*
-   * check scopes
-   *
-   * catch if acces_token has scopes
-   */
-  protected function hasScopes($scopes)
-  {
-      if ($this->authorizer->hasScope($scopes) === false) {
-          throw new LeagueException\AccessDeniedException();
-      }
-      return true;
-  }
+    /*
+    * check scopes
+    *
+    * catch if acces_token has scopes
+    */
+    protected function hasScopes($scopes)
+    {
+        if ($this->authorizer->hasScope($scopes) === false) {
+            throw new LeagueException\AccessDeniedException();
+        }
+
+        return true;
+    }
+
   /*
    * catchException
    *
@@ -44,6 +45,7 @@ class ApiController extends BaseController implements Httpstatuscodes
   {
       if (!isset($e->errorType)) {
           app()->make('Psr\Log\LoggerInterface')->error($e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
+
           return $this->respond->error([], 500);
       } elseif ($e->errorType === 'access_denied') {
           return $this->respond->error([
