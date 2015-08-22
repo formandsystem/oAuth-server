@@ -21,7 +21,23 @@ class ApiController extends BaseController implements Httpstatuscodes
         $this->request = $request;
         $this->authorizer = $authorizer;
     }
+    /*
+     * validates the token and checks against needed scopes
+     */
+    public function validateAccess($scopes)
+    {
+        try {
+            $token = str_replace('Bearer ', '', $this->request->header('authorization'));
+            $this->authorizer->validateAccessToken(true, $token);
 
+            $this->hasScopes($scopes);
+        } catch (LeagueException\AccessDeniedException $e) {
+            return $this->respond->error([
+                'description' => $e->getMessage(),
+                'code' => 110,
+            ], 401);
+        }
+    }
     /*
     * check scopes
     *
@@ -49,8 +65,8 @@ class ApiController extends BaseController implements Httpstatuscodes
           return $this->respond->error([], 500);
       } elseif ($e->errorType === 'access_denied') {
           return $this->respond->error([
-        'description' => $e->getMessage(),
-        'code' => 110,
+          'description' => $e->getMessage(),
+          'code' => 110,
       ], 401);
       } elseif ($e->errorType === 'invalid_client') {
           return $this->respond->error([

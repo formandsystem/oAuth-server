@@ -12,7 +12,7 @@ class JsonapiController extends ApiController
       return $this->respond->success([
       'jsonapi' => [
         'version' => '1.0',
-      ]
+    ],
     ], self::HTTP_OK);
   }
   /*
@@ -20,8 +20,8 @@ class JsonapiController extends ApiController
    */
   public function optionsJsonApi()
   {
-
       header('Access-Control-Allow-Methods: OPTIONS,GET');
+
       return $this->respond->success(null, self::HTTP_NO_CONTENT);
   }
 }

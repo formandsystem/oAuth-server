@@ -55,7 +55,7 @@ class ClientTest extends BasetestCase
     /**
      * @test
      */
-    public function failed_create_a_client()
+    public function create_client_missing_client_name()
     {
         $response = $this->client->post('client', [
             'headers' => [
@@ -71,7 +71,14 @@ class ClientTest extends BasetestCase
     /**
      * @test
      */
-    public function request_get_client_by_id()
+    public function create_client_missing_access_rights()
+    {
+        $this->fail('Missing implementation of test.');
+    }
+    /**
+     * @test
+     */
+    public function get_client_by_id()
     {
         $response = $this->client->get('client/test_client_id', [
             'headers' => [
@@ -83,5 +90,40 @@ class ClientTest extends BasetestCase
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
         $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());
+    }
+    /**
+     * @test
+     */
+    public function get_client_by_id_not_found()
+    {
+        $this->fail('Missing implementation of test.');
+    }
+    /**
+     * @test
+     */
+    public function get_client_by_id_missing_access_rights()
+    {
+        $this->fail('Missing implementation of test.');
+    }
+    /**
+     * @test
+     */
+    public function update_client()
+    {
+        $this->fail('Missing implementation of test.');
+    }
+    /**
+     * @test
+     */
+    public function update_client_missing_access_rights()
+    {
+        $this->fail('Missing implementation of test.');
+    }
+    /**
+     * @test
+     */
+    public function update_client_client_not_found()
+    {
+        $this->fail('Missing implementation of test.');
     }
 }

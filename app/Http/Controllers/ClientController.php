@@ -33,52 +33,34 @@ class ClientController extends ApiController implements Httpstatuscodes
      */
     public function show($id)
     {
-        try {
-            $token = str_replace('Bearer ', '', $this->request->header('authorizer'));
+        $this->validateAccess(['client.read']);
 
-            $this->authorizer->validateAccessToken(false, $token);
-            $this->hasScopes(['client.read']);
-            $configScopes = config('config.scopes');
+        $client = $this->db->table('oauth_clients')->where('id', $id)->first();
 
-            $client = $this->db->table('oauth_clients')->where('id', $id)->first();
-
-            // TODO: replace with hasScope ?
-            $scopes = $this->db->table('oauth_client_scopes')->where('client_id', $id)->get();
-            foreach ($scopes as $scope) {
-                if (in_array($scope->scope_id, $configScopes['client'])) {
-                    return $this->respond->error([
-                        'description' => 'You are not allowed to view this user.',
-                        'code' => 106,
-                    ], self::FORBIDDEN);
-                }
-            }
-
-            return $this->respond->success(['data' => [
-                'id' => $client->id,
-                'type' => 'client',
-                'attribtues' => [
-                    'id' => $client->id,
-                    'name' => $client->name,
-                    'secret' => $client->secret,
-                ],
-            ]], self::HTTP_OK);
-        } catch (\Exception $e) {
-            return $this->catchException($e);
+        if (count($client) == 0) {
+            return $this->respond->error([], self::HTTP_NOT_FOUND);
         }
+
+        return $this->respond->success(['data' => [
+            'id' => $client->id,
+            'type' => 'client',
+            'attribtues' => [
+                'id' => $client->id,
+                'name' => $client->name,
+                'secret' => $client->secret,
+            ],
+        ]], self::HTTP_OK);
     }
     /*
      * create a client
      */
     public function create()
     {
+        $this->validateAccess(['client.create']);
+        $clientData = $this->newClient($this->request->input('client_name'));
+
         try {
-            $token = str_replace('Bearer ', '', $this->request->header('authorization'));
-            $this->authorizer->validateAccessToken(true, $token);
-            $this->hasScopes(['client.create']);
-
-            $clientData = $this->newClient($this->request->input('client_name'));
-
-            $this->db->table('oauth_clients')->insert($clientData);
+            $test = $this->db->table('oauth_clients')->insertGetId($clientData);
 
             return $this->respond->success(['data' => [
                     'id' => $clientData['id'],
@@ -100,27 +82,30 @@ class ClientController extends ApiController implements Httpstatuscodes
      */
     public function delete($id)
     {
-        try {
-            $token = str_replace('Bearer ', '', $this->request->header('authorization'));
-            $this->authorizer->validateAccessToken(true, $token);
+        $this->validateAccess(['client.delete']);
 
-            $this->hasScopes(['client.delete']);
-            // TODO: add 404 if does not exist
-            $this->db->table('oauth_clients')->where('id', $id)->delete();
+        if( $this->db->table('oauth_clients')->where('id', $id)->delete() == 0){
+            return $this->respond->error([], self::HTTP_NOT_FOUND);
+        }
 
-            return $this->respond->success(null, self::HTTP_NO_CONTENT);
-        } catch (\Exception $e) {
-            return $this->catchException($e);
+        return $this->respond->success(null, self::HTTP_NO_CONTENT);
+    }
+    /*
+     * update
+     */
+    public function update($id)
+    {
+        if (count($client) == 0) {
+            return $this->respond->error([], self::HTTP_NOT_FOUND);
         }
     }
-
     /*
      * create a new client
      */
     public function newClient($name)
     {
         if (strlen(trim($name)) < 2) {
-            throw new InvalidArgumentException('Client name must be at least 2 Characters long.');
+            throw new InvalidArgumentException('Client name must be provided and 2 Characters or more.');
         }
 
         $now = Carbon::now()->toDateTimeString();
