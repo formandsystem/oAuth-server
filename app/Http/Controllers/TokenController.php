@@ -11,8 +11,11 @@ class TokenController extends ApiController
    */
     public function createAccessToken()
     {
-        $token = $this->authorizer->issueAccessToken();
-
+        try{
+            $token = $this->authorizer->issueAccessToken();
+        } catch(\Exception $e) {
+            return $this->catchException($e);
+        }
         return $this->respond->success(
             ['data' => [
                 'id' => $token['access_token'],
@@ -21,7 +24,7 @@ class TokenController extends ApiController
                     $token,
                 ],
             ]],
-          200
+          self::HTTP_OK
         );
     }
     /*
@@ -38,18 +41,28 @@ class TokenController extends ApiController
     */
     public function optionsValidateToken()
     {
-        header('Access-Control-Allow-Methods: OPTIONS, GET');
+        header('Access-Control-Allow-Methods: OPTIONS, POST');
 
-        return $this->respond->success(null, 204);
+        return $this->respond->success(null, self::HTTP_NO_CONTENT);
     }
     /*
      * validate an access token and return scopes
     */
     public function validateToken($token)
     {
-        $scopes = array_map('trim', explode(',', $this->request->input('scope')));
-        $this->validateAccess($scopes);
+        try{
+            // validate current user
+            $this->validateAccess(['token.validate']);
+        } catch(\Exception $e) {
+            return $this->catchException($e);
+        }
 
-        return $respond->success(null, 204);
+        $scopes = array_map('trim', explode(',', $this->request->input('scopes')));
+
+        if( !$this->validateAccess($scopes, $token) ){
+            return $this->respond->error([],self::HTTP_UNAUTHORIZED);
+        }
+
+        return $this->respond->success(null, self::HTTP_NO_CONTENT);
     }
 }

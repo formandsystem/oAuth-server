@@ -57,7 +57,7 @@ $app->singleton(
 */
 
 $app->middleware([
-			'LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware',
+	'LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware',
 //     // Illuminate\Cookie\Middleware\EncryptCookies::class,
 //     // Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 //     // Illuminate\Session\Middleware\StartSession::class,
@@ -66,13 +66,9 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-			'check-authorization-params' => 'LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware',
-			'csrf' => 'Laravel\Lumen\Http\Middleware\VerifyCsrfToken',
-			'oauth' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware',
-			'oauth-owner' => 'LucaDegasperi\OAuth2Server\Middleware\OAuthOwnerMiddleware',
-			'RequestHeader' => 'App\Http\Middleware\RequestHeaderMiddleware',
-			'ContentHeader' => 'App\Http\Middleware\ContentHeaderMiddleware',
-			'cors' => 'App\Http\Middleware\CorsMiddleware',
+	'check-authorization-params' => 'LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware',
+	'csrf' => 'Laravel\Lumen\Http\Middleware\VerifyCsrfToken',
+	'cors' => 'App\Http\Middleware\CorsMiddleware',
 ]);
 
 /*

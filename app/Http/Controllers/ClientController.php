@@ -60,7 +60,7 @@ class ClientController extends ApiController implements Httpstatuscodes
         $clientData = $this->newClient($this->request->input('client_name'));
 
         try {
-            $test = $this->db->table('oauth_clients')->insertGetId($clientData);
+            $this->db->table('oauth_clients')->insertGetId($clientData);
 
             return $this->respond->success(['data' => [
                     'id' => $clientData['id'],

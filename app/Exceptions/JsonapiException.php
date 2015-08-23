@@ -5,7 +5,7 @@ namespace App\Exceptions;
 use App\ValueObjects\JsonapiError;
 use Lukasoppermann\Httpstatus\Httpstatuscodes;
 
-class JsonapiException extends \Exception implements Httpstatuscodes
+abstract class JsonapiException extends \Exception implements Httpstatuscodes
 {
     protected $errorObject;
 

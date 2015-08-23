@@ -21,7 +21,7 @@ $app->post('token', ['middleware' => ['cors:disabledContentType'], 'uses' => 'To
 // options token
 $app->options('token/{token}', ['middleware' => ['cors'], 'uses' => 'TokenController@optionsValidateToken']);
 // validate token
-$app->get('token/{token}', ['middleware' => ['cors:disabledContentType'], 'uses' => 'TokenController@validateToken']);
+$app->post('token/{token}', ['middleware' => ['cors:disabledContentType'], 'uses' => 'TokenController@validateToken']);
 /*
 |--------------------------------------------------------------------------
 | /client

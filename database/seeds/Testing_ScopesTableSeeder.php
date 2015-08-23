@@ -69,6 +69,12 @@ class Testing_ScopesTableSeeder extends Seeder
                 'created_at' => $datetime,
                 'updated_at' => $datetime,
             ],
+            [
+                'id' => 'token.validate',
+                'description' => 'Validate access token',
+                'created_at' => $datetime,
+                'updated_at' => $datetime,
+            ],
         ];
 
         DB::table('oauth_scopes')->insert($scopes);
@@ -84,7 +90,19 @@ class Testing_ScopesTableSeeder extends Seeder
             ],
             [
                 'client_id' => 'test_client_id',
-                'scope_id' => 'content.write',
+                'scope_id' => 'content.create',
+                'created_at' => $datetime,
+                'updated_at' => $datetime,
+            ],
+            [
+                'client_id' => 'test_client_id',
+                'scope_id' => 'content.update',
+                'created_at' => $datetime,
+                'updated_at' => $datetime,
+            ],
+            [
+                'client_id' => 'test_client_id',
+                'scope_id' => 'content.delete',
                 'created_at' => $datetime,
                 'updated_at' => $datetime,
             ],
@@ -111,10 +129,16 @@ class Testing_ScopesTableSeeder extends Seeder
                 'scope_id' => 'client.delete',
                 'created_at' => $datetime,
                 'updated_at' => $datetime,
-            ]
+            ],
+            [
+                'client_id' => 'test_cms_id',
+                'scope_id' => 'token.validate',
+                'created_at' => $datetime,
+                'updated_at' => $datetime,
+            ],
         ];
 
-        // DB::table('oauth_client_scopes')->insert($clientScopes);
+        DB::table('oauth_client_scopes')->insert($clientScopes);
 
         // DB::table('oauth_grant_scopes')->delete();
         //
