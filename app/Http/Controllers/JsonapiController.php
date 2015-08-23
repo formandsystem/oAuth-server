@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\ValueObjects\JsonapiData;
+
 class JsonapiController extends ApiController
 {
     /*
@@ -9,11 +11,7 @@ class JsonapiController extends ApiController
    */
   public function getJsonApi()
   {
-      return $this->respond->success([
-      'jsonapi' => [
-        'version' => '1.0',
-    ],
-    ], self::HTTP_OK);
+      return response(new JsonapiData([]), self::HTTP_OK);
   }
   /*
    * @method: OPTIONS
@@ -22,6 +20,6 @@ class JsonapiController extends ApiController
   {
       header('Access-Control-Allow-Methods: OPTIONS,GET');
 
-      return $this->respond->success(null, self::HTTP_NO_CONTENT);
+      return response(null, self::HTTP_NO_CONTENT);
   }
 }

@@ -17,18 +17,18 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         parent::setUp();
 
         $this->refreshApplication();
-
-        $this->artisan('migrate:reset');
-        $this->artisan('migrate');
-        $this->artisan('db:seed');
     }
 
     public function tearDown()
     {
+
+        parent::tearDown();
+    }
+
+    public function setupBD()
+    {
         $this->artisan('migrate:reset');
         $this->artisan('migrate');
         $this->artisan('db:seed');
-
-        parent::tearDown();
     }
 }

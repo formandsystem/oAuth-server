@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Respond;
+use App\Services\ResponseService as ResponseService;
+use Illuminate\Http\Response;
+use App\ValueObjects\JsonapiError;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use League\OAuth2\Server\Exception as LeagueException;
@@ -12,12 +15,14 @@ use Lukasoppermann\Httpstatus\Httpstatuscodes;
 class ApiController extends BaseController implements Httpstatuscodes
 {
     protected $respond;
+    protected $response;
     protected $request;
     protected $authorizer;
 
-    public function __construct(Respond $respond, Request $request, Authorizer $authorizer)
+    public function __construct(Respond $respond, Response $response, Request $request, Authorizer $authorizer)
     {
         $this->respond = $respond;
+        $this->response = $response;
         $this->request = $request;
         $this->authorizer = $authorizer;
     }
