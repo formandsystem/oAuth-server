@@ -18,5 +18,4 @@ class UnsupportedAcceptHeaderExceptionSpec extends ObjectBehavior
         $this->shouldHaveType('App\Exceptions\UnsupportedAcceptHeaderException');
         $this->shouldImplement('Lukasoppermann\Httpstatus\Httpstatuscodes');
     }
-
 }

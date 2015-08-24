@@ -11,11 +11,12 @@ class TokenController extends ApiController
    */
     public function createAccessToken()
     {
-        try{
+        try {
             $token = $this->authorizer->issueAccessToken();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->catchException($e);
         }
+
         return $this->respond->success(
             ['data' => [
                 'id' => $token['access_token'],
@@ -50,17 +51,17 @@ class TokenController extends ApiController
     */
     public function validateToken($token)
     {
-        try{
+        try {
             // validate current user
             $this->validateAccess(['token.validate']);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->catchException($e);
         }
 
         $scopes = array_map('trim', explode(',', $this->request->input('scopes')));
 
-        if( !$this->validateAccess($scopes, $token) ){
-            return $this->respond->error([],self::HTTP_UNAUTHORIZED);
+        if (!$this->validateAccess($scopes, $token)) {
+            return $this->respond->error([], self::HTTP_UNAUTHORIZED);
         }
 
         return $this->respond->success(null, self::HTTP_NO_CONTENT);

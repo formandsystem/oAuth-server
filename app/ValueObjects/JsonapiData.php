@@ -4,7 +4,6 @@ namespace App\ValueObjects;
 
 class JsonapiData extends AbstractValueObject
 {
-
     // make sure to include / at the end
     protected $devUrl = 'http://dev.formandsystem.com/';
 

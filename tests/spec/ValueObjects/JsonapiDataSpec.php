@@ -10,7 +10,7 @@ class JsonapiDataSpec extends ObjectBehavior
     {
         $data = [
             'id' => '1',
-            'type' => 'data'
+            'type' => 'data',
         ];
         $this->beConstructedWith($data);
     }
@@ -25,7 +25,7 @@ class JsonapiDataSpec extends ObjectBehavior
     {
         $this->get()->shouldBeArray();
         $this->get()->shouldHaveKey('jsonapi');
-        $this->get()['jsonapi']->shouldHaveKeyWithValue('version','1.0');
+        $this->get()['jsonapi']->shouldHaveKeyWithValue('version', '1.0');
     }
 
     public function it_should_return_json_when_accessed_as_a_string()
@@ -38,5 +38,4 @@ class JsonapiDataSpec extends ObjectBehavior
     {
         $this->shouldThrow(new \InvalidArgumentException("A value must be specified for App\ValueObjects\JsonapiData."))->during__construct(null);
     }
-
 }

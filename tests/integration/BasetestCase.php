@@ -10,8 +10,6 @@ class BasetestCase extends TestCase implements Httpstatuscodes
 
     public function setUp()
     {
-        
-
         $this->client = new GuzzleHttp\Client([
             'base_uri' => env('TEST_BASE_URL'),
             'exceptions' => false,

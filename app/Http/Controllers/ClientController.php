@@ -84,7 +84,7 @@ class ClientController extends ApiController implements Httpstatuscodes
     {
         $this->validateAccess(['client.delete']);
 
-        if( $this->db->table('oauth_clients')->where('id', $id)->delete() == 0){
+        if ($this->db->table('oauth_clients')->where('id', $id)->delete() == 0) {
             return $this->respond->error([], self::HTTP_NOT_FOUND);
         }
 

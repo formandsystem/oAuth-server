@@ -1,6 +1,7 @@
 <?php
 
 namespace App\ValueObjects;
+
 use InvalidArgumentException;
 
 abstract class AbstractValueObject

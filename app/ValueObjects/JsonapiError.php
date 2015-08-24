@@ -13,7 +13,16 @@ class JsonapiError extends AbstractValueObject
 
         // add about link if code is given
         if (isset($value['code'])) {
-            $this->value['links']['about'] = $this->devUrl.'errors/#'.$value['code'];
+            $this->value['links']['about'] = $this->errorLink($value['code']);
         }
+
+        $this->value = [
+            'errors' => $this->value,
+        ];
+    }
+
+    public function errorLink($code)
+    {
+        return $this->devUrl.'errors/#'.$code;
     }
 }

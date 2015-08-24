@@ -21,7 +21,6 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
 
     public function tearDown()
     {
-
         parent::tearDown();
     }
 

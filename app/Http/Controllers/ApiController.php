@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Respond;
-use App\Services\ResponseService as ResponseService;
-use Illuminate\Http\Response;
-use App\ValueObjects\JsonapiError;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use League\OAuth2\Server\Exception as LeagueException;
 use LucaDegasperi\OAuth2Server\Authorizer;
@@ -32,7 +30,7 @@ class ApiController extends BaseController implements Httpstatuscodes
     public function validateAccess($scopes, $token = null)
     {
         try {
-            if( $token === null ){
+            if ($token === null) {
                 $token = str_replace('Bearer ', '', $this->request->header('authorization'));
             }
             $this->authorizer->validateAccessToken(true, $token);

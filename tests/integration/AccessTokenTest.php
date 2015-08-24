@@ -98,7 +98,7 @@ class AccessTokenTest extends BasetestCase
                 'Authorization' => 'Bearer token_validation_token',
             ],
             'form_params' => [
-                'scopes' => 'client.read'
+                'scopes' => 'client.read',
             ],
         ]);
         $this->checkDefaultHeader($response);
