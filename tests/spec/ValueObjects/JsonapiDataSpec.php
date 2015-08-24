@@ -10,7 +10,7 @@ class JsonapiDataSpec extends SpecTestCase
     public function let()
     {
         $data = [
-            'id' => '1',
+            'id' => 1,
             'type' => 'data',
         ];
         $this->beConstructedWith($data);
@@ -37,5 +37,24 @@ class JsonapiDataSpec extends SpecTestCase
     public function it_should_throw_exception_if_no_value_provided()
     {
         $this->shouldThrow(new \InvalidArgumentException("A value must be specified for App\ValueObjects\JsonapiData."))->during__construct(null);
+    }
+
+    public function it_should_throw_exception_if_wrong_value_provided()
+    {
+        $this->shouldThrow(new \InvalidArgumentException('A resource object must not contain a member of type "wrong".'))->during__construct([
+            'id' => 1,
+            'type' => 'test',
+            'wrong' => 'wrong',
+        ]);
+    }
+
+    public function it_should_throw_exception_if_id_or_type_missing()
+    {
+        $this->shouldThrow(new \InvalidArgumentException('A resource object must at least contain a member of type "id" and "type".'))->during__construct([
+            'type' => 'test',
+        ]);
+        $this->shouldThrow(new \InvalidArgumentException('A resource object must at least contain a member of type "id" and "type".'))->during__construct([
+            'id' => 1,
+        ]);
     }
 }
