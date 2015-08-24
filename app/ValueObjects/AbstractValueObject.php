@@ -10,11 +10,11 @@ abstract class AbstractValueObject
 
     public function __construct($value)
     {
-        if (!isset($value)) {
+        if (is_null($value)) {
             throw new InvalidArgumentException('A value must be specified for '.get_class($this).'.');
         }
 
-        $this->value = $this->validateValue($value);
+        $this->value = $this->_set($this->validateValue($value));
     }
     /*
      * validates the given value
@@ -29,6 +29,13 @@ abstract class AbstractValueObject
     public function get()
     {
         return $this->value;
+    }
+    /*
+     * return jsonapi error object
+     */
+    protected function _set($value)
+    {
+        return $value;
     }
     /*
      * return json string of error object

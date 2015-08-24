@@ -2,27 +2,54 @@
 
 namespace App\ValueObjects;
 
+use InvalidArgumentException;
+
 class JsonapiError extends AbstractValueObject
 {
     // make sure to include / at the end
     protected $devUrl = 'http://dev.formandsystem.com/';
 
+    protected $allowedKeys = [
+        'id',
+        'links',
+        'status',
+        'code',
+        'title',
+        'detail',
+        'source',
+        'meta',
+    ];
+
     public function __construct($value)
     {
-        parent::__construct($value);
-
         // add about link if code is given
         if (isset($value['code'])) {
-            $this->value['links']['about'] = $this->errorLink($value['code']);
+            $value['links']['about'] = $this->errorLink($value['code']);
         }
 
-        $this->value = [
-            'errors' => $this->value,
-        ];
+        parent::__construct($value);
+    }
+
+    public function validateValue($value)
+    {
+        foreach ($value as $k => $v) {
+            if (!in_array($k, $this->allowedKeys)) {
+                throw new InvalidArgumentException('An error object must not contain a member of type "'.$k.'".');
+            }
+        }
+
+        return $value;
     }
 
     public function errorLink($code)
     {
-        return $this->devUrl.'errors/#'.$code;
+        return trim($this->devUrl, '/').'/errors/#'.$code;
+    }
+
+    public function _set($value)
+    {
+        return [
+            'errors' => $value,
+        ];
     }
 }

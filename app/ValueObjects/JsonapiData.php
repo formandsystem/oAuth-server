@@ -7,10 +7,10 @@ class JsonapiData extends AbstractValueObject
     // make sure to include / at the end
     protected $devUrl = 'http://dev.formandsystem.com/';
 
-    public function __construct($value)
+    public function _set($value)
     {
-        parent::__construct($value);
+        $value['jsonapi'] = ['version' => '1.0'];
 
-        $this->value['jsonapi'] = ['version' => '1.0'];
+        return $value;
     }
 }
