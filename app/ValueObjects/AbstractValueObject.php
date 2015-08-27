@@ -19,7 +19,7 @@ abstract class AbstractValueObject
     /*
      * validates the given value
      */
-    public function validateValue($value)
+    protected function validateValue($value)
     {
         return $value;
     }

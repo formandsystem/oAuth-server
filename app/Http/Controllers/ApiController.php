@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Respond;
 use App\ValueObjects\JsonapiError;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -26,76 +25,53 @@ class ApiController extends BaseController implements Httpstatuscodes
         $this->db = app('db');
     }
     /*
-     * validates the token and checks against needed scopes
+     * validates the token provided in the request header and checks against needed scopes
      */
-    public function validateAccess($scopes, $token = null)
+    protected function hasAccessOrFail($scopes)
     {
-        try {
-            if ($token === null) {
-                $token = str_replace('Bearer ', '', $this->request->header('authorization'));
-            }
+        $token = str_replace('Bearer ', '', $this->request->header('authorization'));
 
-            $this->authorizer->validateAccessToken(false, $token);
-
-            $this->hasScopes($scopes);
-        } catch (LeagueException\AccessDeniedException $e) {
-            return false;
+        if (!$this->isValidToken($token)) {
+            return new JsonapiError([
+                'code' => 100,
+                'title' => 'Invalid request access token',
+                'detail' => 'The access token used to perform the request may be wrong or expired.',
+            ]);
         }
-    }
-    /*
-    * check scopes
-    *
-    * catch if acces_token has scopes
-    */
-    protected function hasScopes($scopes)
-    {
-        if ($this->authorizer->hasScope($scopes) === false) {
-            throw new LeagueException\AccessDeniedException();
+
+        if (!$this->hasScopes($token, $scopes)) {
+            return new JsonapiError([
+                'code' => 101,
+                'title' => 'Invalid request scope',
+                'detail' => 'You don\'t have the appropriate access rights to perform this request.',
+            ]);
         }
 
         return true;
     }
+    /*
+     * validates the given token
+     */
+    protected function isValidToken($token)
+    {
+        try {
+            $this->authorizer->validateAccessToken(false, $token);
+        } catch (LeagueException\AccessDeniedException $e) {
+            return false;
+        }
 
-  /*
-   * catchException
-   *
-   * catch a generic error
-   */
-  protected function catchException($e)
-  {
-      if (!isset($e->errorType)) {
-          app()->make('Psr\Log\LoggerInterface')->error($e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
+        return true;
+    }
+    /*
+    * check scopes
+    */
+    protected function hasScopes($token, $scopes)
+    {
+        // TODO: test if has scope can be fooled with empty string
+        if (!$this->isValidToken($token) || $this->authorizer->hasScope($scopes) === false) {
+            return false;
+        }
 
-          return response(new JsonapiError([]), 500);
-      } elseif ($e->errorType === 'access_denied') {
-          return response(new JsonapiError([
-          'detail' => $e->getMessage(),
-          'code' => 110,
-      ]), 401);
-      } elseif ($e->errorType === 'invalid_client') {
-          return response(new JsonapiError([
-        'detail' => $e->getMessage(),
-        'code' => 111,
-      ]), 401);
-      } elseif ($e->errorType === 'unsupported_grant_type') {
-          return response(new JsonapiError([
-        'detail' => $e->getMessage(),
-        'code' => 112,
-      ]), 400);
-      } elseif ($e->errorType === 'invalid_scope') {
-          return response(new JsonapiError([
-        'detail' => $e->getMessage(),
-        'code' => 113,
-      ]), 400);
-      } elseif ($e->errorType === 'invalid_request') {
-          return response(new JsonapiError([
-        'detail' => $e->getMessage(),
-        'code' => 114,
-      ]), 400);
-      } else {
-          return response(new JsonapiError([
-        'detail' => $e->getMessage(),
-      ]), 400);
-      }
-  }
+        return true;
+    }
 }

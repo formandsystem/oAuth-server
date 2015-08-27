@@ -12,7 +12,7 @@ class JsonapiController extends ApiController
         return response(json_encode([
             'jsonapi' => [
                 'version' => '1.0',
-            ]
+            ],
         ]), self::HTTP_OK);
     }
     /*

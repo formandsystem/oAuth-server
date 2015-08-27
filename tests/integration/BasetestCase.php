@@ -48,4 +48,13 @@ class BasetestCase extends TestCase implements Httpstatuscodes
         $errorText = 'Expected: '.$expectedCode.' ('.$this->httpstatus->getReasonPhrase($expectedCode).') but received '.$responseCode.' ('.$this->httpstatus->getReasonPhrase($responseCode).')';
         $this->assertEquals($expectedCode, $responseCode, $errorText);
     }
+    /*
+     * check array against expected array
+     */
+    public function validateArray($expected, $actual)
+    {
+        ksort($expected);
+        ksort($actual);
+        $this->assertSame($expected, $actual);
+    }
 }

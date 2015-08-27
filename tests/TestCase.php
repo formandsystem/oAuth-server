@@ -2,6 +2,7 @@
 
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
+    protected static $dbInit = false;
     /**
      * Creates the application.
      *
@@ -17,7 +18,11 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         parent::setUp();
 
         $this->refreshApplication();
-        // $this->setupDB();
+
+        if (!static::$dbInit) {
+            static::$dbInit = true;
+            $this->setupDB();
+        }
     }
 
     public function tearDown()

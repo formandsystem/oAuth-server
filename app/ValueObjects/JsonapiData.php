@@ -18,14 +18,14 @@ class JsonapiData extends AbstractValueObject
         'meta',
     ];
 
-    public function _set($value)
+    protected function _set($value)
     {
         $value['jsonapi'] = ['version' => '1.0'];
 
         return $value;
     }
 
-    public function validateValue($value)
+    protected function validateValue($value)
     {
         if (!isset($value['id']) || !isset($value['type'])) {
             throw new InvalidArgumentException('A resource object must at least contain a member of type "id" and "type".');

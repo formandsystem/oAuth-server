@@ -24,7 +24,7 @@ class ClientTest extends BasetestCase
         $response = $this->client->post('client', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer test_cms_id',
+                'Authorization' => 'Bearer cms_token',
             ],
             'form_params' => [
                 'client_name' => 'created_by_test',
@@ -43,20 +43,29 @@ class ClientTest extends BasetestCase
         $response = $this->client->post('client', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer test_cms_id',
+                'Authorization' => 'Bearer cms_token',
             ],
         ]);
 
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->checkStatusCode(self::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function create_client_missing_access_rights()
     {
-        $this->fail('Missing implementation of test.');
+        $response = $this->client->post('client', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer cms_token',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
     /**
      * @test
@@ -66,10 +75,10 @@ class ClientTest extends BasetestCase
         $response = $this->client->get('client/test_client_id', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorizer' => 'Bearer test_cms_id',
+                'Authorization' => 'Bearer cms_token',
             ],
         ]);
-        
+
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
         $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());
@@ -79,34 +88,127 @@ class ClientTest extends BasetestCase
      */
     public function get_client_by_id_not_found()
     {
-        $this->fail('Missing implementation of test.');
+        $response = $this->client->get('client/not_found_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer cms_token',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_NOT_FOUND, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function get_client_by_id_missing_access_rights()
     {
-        $this->fail('Missing implementation of test.');
+        $response = $this->client->get('client/test_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer test_client_id',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function update_client()
     {
-        $this->fail('Missing implementation of test.');
+        $response = $this->client->put('client/test_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer cms_token',
+            ],
+        ]);
+        $this->markTestSkipped('Not yet done');
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function update_client_missing_access_rights()
     {
-        $this->fail('Missing implementation of test.');
+        $response = $this->client->put('client/test_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer test_client_id',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function update_client_client_not_found()
     {
-        $this->fail('Missing implementation of test.');
+        $response = $this->client->put('client/not_found_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer cms_token',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
+    /**
+     * @test
+     */
+    public function delete_client()
+    {
+        $response = $this->client->delete('client/test_delete_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer cms_token',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+    /**
+     * @test
+     */
+    public function delete_client_missing_access_rights()
+    {
+        $response = $this->client->delete('client/test_delete_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer test_delete_client_id',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+    /**
+     * @test
+     */
+    public function delete_client_client_not_found()
+    {
+        $response = $this->client->delete('client/test_delete_client_id', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer cms_token',
+            ],
+        ]);
+
+        $this->checkDefaultHeader($response);
+        $this->checkAuthHeader($response);
+        $this->checkStatusCode(self::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 }

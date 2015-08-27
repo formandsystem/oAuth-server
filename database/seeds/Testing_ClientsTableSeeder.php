@@ -30,6 +30,13 @@ class Testing_ClientsTableSeeder extends Seeder
                 'updated_at' => $datetime,
             ],
             [
+                'id' => 'test_delete_client_id',
+                'secret' => 'test_delete_client_secret',
+                'name' => 'test_delete_client',
+                'created_at' => $datetime,
+                'updated_at' => $datetime,
+            ],
+            [
                 'id' => 'test_cms_id',
                 'secret' => 'test_cms_secret',
                 'name' => 'test_cms_name',

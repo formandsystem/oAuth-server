@@ -30,7 +30,7 @@ class JsonapiError extends AbstractValueObject
         parent::__construct($value);
     }
 
-    public function validateValue($value)
+    protected function validateValue($value)
     {
         foreach ($value as $k => $v) {
             if (!in_array($k, $this->allowedKeys)) {
@@ -41,12 +41,12 @@ class JsonapiError extends AbstractValueObject
         return $value;
     }
 
-    public function errorLink($code)
+    private function errorLink($code)
     {
         return trim($this->devUrl, '/').'/errors/#'.$code;
     }
 
-    public function _set($value)
+    protected function _set($value)
     {
         return [
             'errors' => $value,

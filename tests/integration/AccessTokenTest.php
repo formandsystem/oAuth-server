@@ -44,6 +44,19 @@ class AccessTokenTest extends BasetestCase
                 'Accept' => 'application/json',
             ], ]
         );
+        $responseArray = json_decode($response->getBody()->getContents(), true);
+
+        $this->validateArray([
+            'id' => $responseArray['id'],
+            'type' => 'access_token',
+            'attributes' => [
+                'access_token' => $responseArray['id'],
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+                'expire_time' => $responseArray['attributes']['expire_time'],
+            ],
+        ], $responseArray);
+
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
         $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());
@@ -65,7 +78,7 @@ class AccessTokenTest extends BasetestCase
         );
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
-        $this->checkStatusCode(self::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        $this->checkStatusCode(self::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
     /**
      * @test
@@ -98,25 +111,82 @@ class AccessTokenTest extends BasetestCase
                 'Authorization' => 'Bearer token_validation_token',
             ],
             'form_params' => [
-                'scopes' => 'client.read',
+                'scopes' => 'content.read',
             ],
         ]);
         $this->checkDefaultHeader($response);
         $this->checkStatusCode(self::HTTP_NO_CONTENT, $response->getStatusCode());
-        // $this->fail('Validates any token');
     }
     /**
      * @test
      */
-    public function validate_invalid_token()
+    public function validate_valid_token_invalid_request_token()
     {
-        $this->fail('Missing implementation of test.');
+        // test valid token
+        $response = $this->client->post('token/valid_access_token', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer valid_access_token',
+            ],
+            'form_params' => [
+                'scopes' => 'content.read',
+            ],
+        ]);
+        $this->checkDefaultHeader($response);
+        $this->checkStatusCode(self::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+    /**
+     * @test
+     */
+    public function validate_expired_token()
+    {
+        // test valid token
+        $response = $this->client->post('token/expired_access_token', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer token_validation_token',
+            ],
+            'form_params' => [
+                'scopes' => 'content.read',
+            ],
+        ]);
+        $this->checkDefaultHeader($response);
+        $this->checkStatusCode(self::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+    /**
+     * @test
+     */
+    public function validate_not_existing_token()
+    {
+        // test valid token
+        $response = $this->client->post('token/not_found_access_token', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer token_validation_token',
+            ],
+            'form_params' => [
+                'scopes' => 'content.read',
+            ],
+        ]);
+        $this->checkDefaultHeader($response);
+        $this->checkStatusCode(self::HTTP_FORBIDDEN, $response->getStatusCode());
     }
     /**
      * @test
      */
     public function validate_invalid_scope()
     {
-        $this->fail('Missing implementation of test.');
+        // test valid token
+        $response = $this->client->post('token/valid_access_token', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer token_validation_token',
+            ],
+            'form_params' => [
+                'scopes' => 'client.read',
+            ],
+        ]);
+        $this->checkDefaultHeader($response);
+        $this->checkStatusCode(self::HTTP_FORBIDDEN, $response->getStatusCode());
     }
 }

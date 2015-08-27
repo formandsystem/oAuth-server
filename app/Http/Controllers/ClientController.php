@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Respond;
-use App\Http\Controllers\ApiController;
-use App\ValueObjects\JsonapiError;
 use App\ValueObjects\JsonapiData;
+use App\ValueObjects\JsonapiError;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use InvalidArgumentException;
-use LucaDegasperi\OAuth2Server\Authorizer;
 use Lukasoppermann\Httpstatus\Httpstatuscodes;
 
 class ClientController extends ApiController implements Httpstatuscodes
 {
-
     /*
      * get client options
      */
@@ -29,14 +24,23 @@ class ClientController extends ApiController implements Httpstatuscodes
      */
     public function show($id)
     {
-        $this->validateAccess(['client.read']);
-
-        $client = $this->db->table('oauth_clients')->where('id', $id)->first();
-
-        if (count($client) == 0) {
-            return response(new JsonapiError([]), self::HTTP_NOT_FOUND);
+        // validate request access token
+        $validateAccess = $this->hasAccessOrFail(['client.read']);
+        // validate request access token
+        if ($validateAccess !== true) {
+            return response($validateAccess, self::HTTP_UNAUTHORIZED);
         }
-
+        // try to get client from DB
+        $client = $this->db->table('oauth_clients')->where('id', $id)->first();
+        // check if client exists or fail
+        if (count($client) == 0) {
+            return response(new JsonapiError([
+                'code' => 304,
+                'title' => 'Not found',
+                'detail' => 'The resource was not found.',
+            ]), self::HTTP_NOT_FOUND);
+        }
+        // return client
         return response(new JsonapiData([
             'id' => $client->id,
             'type' => 'client',
@@ -52,39 +56,54 @@ class ClientController extends ApiController implements Httpstatuscodes
      */
     public function create()
     {
-        $this->validateAccess(['client.create']);
-
-        try {
-            $clientData = $this->newClient($this->request->input('client_name'));
-
-            $this->db->table('oauth_clients')->insertGetId($clientData);
-
-            return response(new JsonapiData([
-                    'id' => $clientData['id'],
-                    'type' => 'client',
-                    'attributes' => [
-                        'secret' => $clientData['secret'],
-                    ],
-                    'links' => [
-                        'self' => url('/client/'.$clientData['id']),
-                    ],
-                ]), self::HTTP_CREATED);
-        } catch (\InvalidArgumentException $e) {
+        // validate request access token
+        $validateAccess = $this->hasAccessOrFail(['client.create']);
+        // validate request access token
+        if ($validateAccess !== true) {
+            return response($validateAccess, self::HTTP_UNAUTHORIZED);
+        }
+        // try to create client
+        $clientData = $this->newClient($this->request->input('client_name'));
+        // creation failed due to missing name
+        if ($clientData === false) {
             return response(new JsonapiError([
-                'code' => 200,
-                'detail' => $e->getMessage(),
+                'code' => 300,
+                'title' => 'Missing parameter',
+                'detail' => 'The parameter "client_name" must be provided.',
             ]), self::HTTP_BAD_REQUEST);
         }
+
+        $this->db->table('oauth_clients')->insertGetId($clientData);
+
+        return response(new JsonapiData([
+                'id' => $clientData['id'],
+                'type' => 'client',
+                'attributes' => [
+                    'secret' => $clientData['secret'],
+                ],
+                'links' => [
+                    'self' => url('/client/'.$clientData['id']),
+                ],
+            ]), self::HTTP_CREATED);
     }
     /*
      * delete a client
      */
     public function delete($id)
     {
-        $this->validateAccess(['client.delete']);
+        // validate request access token
+        $validateAccess = $this->hasAccessOrFail(['client.delete']);
+        // validate request access token
+        if ($validateAccess !== true) {
+            return response($validateAccess, self::HTTP_UNAUTHORIZED);
+        }
 
         if ($this->db->table('oauth_clients')->where('id', $id)->delete() == 0) {
-            return response(new JsonapiError([]), self::HTTP_NOT_FOUND);
+            return response(new JsonapiError([
+                'code' => 304,
+                'title' => 'Not found',
+                'detail' => 'The resource was not found.',
+            ]), self::HTTP_NOT_FOUND);
         }
 
         return response(null, self::HTTP_NO_CONTENT);
@@ -94,11 +113,21 @@ class ClientController extends ApiController implements Httpstatuscodes
      */
     public function update($id)
     {
-        $this->validateAccess(['client.update']);
+        // validate request access token
+        $validateAccess = $this->hasAccessOrFail(['client.update']);
+        // validate request access token
+        if ($validateAccess !== true) {
+            return response($validateAccess, self::HTTP_UNAUTHORIZED);
+        }
+
         $client = $this->db->table('oauth_clients')->where('id', $id)->first();
 
         if (count($client) == 0) {
-            return response(new JsonapiError([]), self::HTTP_NOT_FOUND);
+            return response(new JsonapiError([
+                'code' => 304,
+                'title' => 'Not found',
+                'detail' => 'The resource was not found.',
+            ]), self::HTTP_NOT_FOUND);
         }
     }
     /*
@@ -107,7 +136,7 @@ class ClientController extends ApiController implements Httpstatuscodes
     public function newClient($name)
     {
         if (strlen(trim($name)) < 2) {
-            throw new InvalidArgumentException('Client name must be provided as a string of 2 Characters or more.');
+            return false;
         }
 
         $now = Carbon::now()->toDateTimeString();
