@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Respond;
+use App\Http\Controllers\ApiController;
+use App\ValueObjects\JsonapiError;
+use App\ValueObjects\JsonapiData;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
@@ -11,13 +14,6 @@ use Lukasoppermann\Httpstatus\Httpstatuscodes;
 
 class ClientController extends ApiController implements Httpstatuscodes
 {
-    protected $clientRepository;
-
-    public function __construct(Respond $respond, Request $request, Authorizer $authorizer)
-    {
-        parent::__construct($respond, $request, $authorizer);
-        $this->db = app('db');
-    }
 
     /*
      * get client options
@@ -26,7 +22,7 @@ class ClientController extends ApiController implements Httpstatuscodes
     {
         header('Access-Control-Allow-Methods: OPTIONS, POST');
 
-        return $this->respond->success(null, self::HTTP_NO_CONTENT);
+        return response(null, self::HTTP_NO_CONTENT);
     }
     /*
      * get a client
@@ -38,18 +34,18 @@ class ClientController extends ApiController implements Httpstatuscodes
         $client = $this->db->table('oauth_clients')->where('id', $id)->first();
 
         if (count($client) == 0) {
-            return $this->respond->error([], self::HTTP_NOT_FOUND);
+            return response(new JsonapiError([]), self::HTTP_NOT_FOUND);
         }
 
-        return $this->respond->success(['data' => [
+        return response(new JsonapiData([
             'id' => $client->id,
             'type' => 'client',
-            'attribtues' => [
+            'attributes' => [
                 'id' => $client->id,
                 'name' => $client->name,
                 'secret' => $client->secret,
             ],
-        ]], self::HTTP_OK);
+        ]), self::HTTP_OK);
     }
     /*
      * create a client
@@ -57,12 +53,13 @@ class ClientController extends ApiController implements Httpstatuscodes
     public function create()
     {
         $this->validateAccess(['client.create']);
-        $clientData = $this->newClient($this->request->input('client_name'));
 
         try {
+            $clientData = $this->newClient($this->request->input('client_name'));
+
             $this->db->table('oauth_clients')->insertGetId($clientData);
 
-            return $this->respond->success(['data' => [
+            return response(new JsonapiData([
                     'id' => $clientData['id'],
                     'type' => 'client',
                     'attributes' => [
@@ -71,10 +68,12 @@ class ClientController extends ApiController implements Httpstatuscodes
                     'links' => [
                         'self' => url('/client/'.$clientData['id']),
                     ],
-                ],
-            ], self::HTTP_CREATED);
-        } catch (\Exception $e) {
-            return $this->catchException($e);
+                ]), self::HTTP_CREATED);
+        } catch (\InvalidArgumentException $e) {
+            return response(new JsonapiError([
+                'code' => 200,
+                'detail' => $e->getMessage(),
+            ]), self::HTTP_BAD_REQUEST);
         }
     }
     /*
@@ -85,18 +84,21 @@ class ClientController extends ApiController implements Httpstatuscodes
         $this->validateAccess(['client.delete']);
 
         if ($this->db->table('oauth_clients')->where('id', $id)->delete() == 0) {
-            return $this->respond->error([], self::HTTP_NOT_FOUND);
+            return response(new JsonapiError([]), self::HTTP_NOT_FOUND);
         }
 
-        return $this->respond->success(null, self::HTTP_NO_CONTENT);
+        return response(null, self::HTTP_NO_CONTENT);
     }
     /*
      * update
      */
     public function update($id)
     {
+        $this->validateAccess(['client.update']);
+        $client = $this->db->table('oauth_clients')->where('id', $id)->first();
+
         if (count($client) == 0) {
-            return $this->respond->error([], self::HTTP_NOT_FOUND);
+            return response(new JsonapiError([]), self::HTTP_NOT_FOUND);
         }
     }
     /*
@@ -105,7 +107,7 @@ class ClientController extends ApiController implements Httpstatuscodes
     public function newClient($name)
     {
         if (strlen(trim($name)) < 2) {
-            throw new InvalidArgumentException('Client name must be provided and 2 Characters or more.');
+            throw new InvalidArgumentException('Client name must be provided as a string of 2 Characters or more.');
         }
 
         $now = Carbon::now()->toDateTimeString();

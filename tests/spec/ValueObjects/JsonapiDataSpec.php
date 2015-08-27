@@ -2,7 +2,6 @@
 
 namespace spec\App\ValueObjects;
 
-use PhpSpec\ObjectBehavior;
 use SpecTestCase;
 
 class JsonapiDataSpec extends SpecTestCase

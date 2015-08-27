@@ -119,39 +119,6 @@ class Respond
         return $this->response;
     }
     /*
-     * respond with error
-     *
-     * @method error
-     *
-     * @param array $data
-     *
-     * @return Illuminate\Http\Response
-     */
-    public function error($data = [], $statusCode)
-    {
-        $this->setStatus($statusCode);
-
-        $error = array_merge(
-        [
-          'status' => $this->getStatus(),
-          'title' => $this->httpstatus->getReasonPhrase($this->getStatus()),
-        ],
-        $data
-      );
-
-        if (array_key_exists('code', $error) && !is_null($error['code']) && is_int($error['code'])) {
-            $error['links'] = [
-          'about' => $this->errorUrl($error['code']),
-        ];
-        }
-
-        return $this->respond(
-        ['errors' => [
-            'error' => $error,
-          ],
-        ]);
-    }
-    /*
      * respond with Data
      *
      * @method withData

@@ -92,7 +92,7 @@ class AccessTokenTest extends BasetestCase
     public function validate_valid_token()
     {
         // test valid token
-        $response = $this->client->post('token/valid_access_token_WRONG', [
+        $response = $this->client->post('token/valid_access_token', [
             'headers' => [
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer token_validation_token',

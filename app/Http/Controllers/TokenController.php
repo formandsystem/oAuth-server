@@ -2,7 +2,8 @@
 
 namespace app\Http\Controllers;
 
-use App\Http\Controllers\ApiController as ApiController;
+use App\Http\Controllers\ApiController;
+use App\ValueObjects\JsonapiError;
 
 class TokenController extends ApiController
 {
@@ -17,15 +18,14 @@ class TokenController extends ApiController
             return $this->catchException($e);
         }
 
-        return $this->respond->success(
-            ['data' => [
+        return response([
                 'id' => $token['access_token'],
                 'type' => 'access_token',
                 'attributes' => [
                     $token,
                 ],
-            ]],
-          self::HTTP_OK
+            ],
+            self::HTTP_OK
         );
     }
     /*
@@ -35,7 +35,7 @@ class TokenController extends ApiController
     {
         header('Access-Control-Allow-Methods: OPTIONS, POST');
 
-        return $this->respond->success(null, self::HTTP_NO_CONTENT);
+        return response(null, self::HTTP_NO_CONTENT);
     }
     /*
      * @method: OPTIONS
@@ -44,7 +44,7 @@ class TokenController extends ApiController
     {
         header('Access-Control-Allow-Methods: OPTIONS, POST');
 
-        return $this->respond->success(null, self::HTTP_NO_CONTENT);
+        return response(null, self::HTTP_NO_CONTENT);
     }
     /*
      * validate an access token and return scopes
@@ -61,9 +61,9 @@ class TokenController extends ApiController
         $scopes = array_map('trim', explode(',', $this->request->input('scopes')));
 
         if (!$this->validateAccess($scopes, $token)) {
-            return $this->respond->error([], self::HTTP_UNAUTHORIZED);
+            return response(new JsonapiError([]), self::HTTP_UNAUTHORIZED);
         }
 
-        return $this->respond->success(null, self::HTTP_NO_CONTENT);
+        return response(null, self::HTTP_NO_CONTENT);
     }
 }

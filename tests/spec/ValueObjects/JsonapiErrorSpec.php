@@ -51,5 +51,4 @@ class JsonapiErrorSpec extends SpecTestCase
             'wrong' => 'test',
         ]);
     }
-
 }

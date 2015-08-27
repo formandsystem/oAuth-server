@@ -3,23 +3,6 @@
 class ClientTest extends BasetestCase
 {
     /**
-     * get a token.
-     */
-    public function getToken()
-    {
-        return json_decode($this->client->post('token', [
-            'form_params' => [
-                'client_id' => 'test_cms_id',
-                'client_secret' => 'test_cms_secret',
-                'grant_type' => 'client_credentials',
-                'scope' => 'client.read,client.create,client.delete,client.update',
-            ],
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-        ])->getBody()->getContents())->data->id;
-    }
-    /**
      * @test
      */
     public function request_options_of_client_route()
@@ -41,7 +24,7 @@ class ClientTest extends BasetestCase
         $response = $this->client->post('client', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer '.$this->getToken(),
+                'Authorization' => 'Bearer test_cms_id',
             ],
             'form_params' => [
                 'client_name' => 'created_by_test',
@@ -60,7 +43,7 @@ class ClientTest extends BasetestCase
         $response = $this->client->post('client', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer '.$this->getToken(),
+                'Authorization' => 'Bearer test_cms_id',
             ],
         ]);
 
@@ -83,10 +66,10 @@ class ClientTest extends BasetestCase
         $response = $this->client->get('client/test_client_id', [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorizer' => 'Bearer '.$this->getToken(),
+                'Authorizer' => 'Bearer test_cms_id',
             ],
         ]);
-        // print_r($response);
+        
         $this->checkDefaultHeader($response);
         $this->checkAuthHeader($response);
         $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());

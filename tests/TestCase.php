@@ -17,6 +17,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         parent::setUp();
 
         $this->refreshApplication();
+        // $this->setupDB();
     }
 
     public function tearDown()
@@ -24,7 +25,7 @@ class TestCase extends Laravel\Lumen\Testing\TestCase
         parent::tearDown();
     }
 
-    public function setupBD()
+    public function setupDB()
     {
         $this->artisan('migrate:reset');
         $this->artisan('migrate');

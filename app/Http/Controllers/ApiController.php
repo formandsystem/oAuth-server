@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Respond;
+use App\ValueObjects\JsonapiError;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Routing\Controller as BaseController;
@@ -12,17 +13,17 @@ use Lukasoppermann\Httpstatus\Httpstatuscodes;
 
 class ApiController extends BaseController implements Httpstatuscodes
 {
-    protected $respond;
     protected $response;
     protected $request;
     protected $authorizer;
+    protected $db;
 
-    public function __construct(Respond $respond, Response $response, Request $request, Authorizer $authorizer)
+    public function __construct(Response $response, Request $request, Authorizer $authorizer)
     {
-        $this->respond = $respond;
         $this->response = $response;
         $this->request = $request;
         $this->authorizer = $authorizer;
+        $this->db = app('db');
     }
     /*
      * validates the token and checks against needed scopes
@@ -33,7 +34,8 @@ class ApiController extends BaseController implements Httpstatuscodes
             if ($token === null) {
                 $token = str_replace('Bearer ', '', $this->request->header('authorization'));
             }
-            $this->authorizer->validateAccessToken(true, $token);
+
+            $this->authorizer->validateAccessToken(false, $token);
 
             $this->hasScopes($scopes);
         } catch (LeagueException\AccessDeniedException $e) {
@@ -64,36 +66,36 @@ class ApiController extends BaseController implements Httpstatuscodes
       if (!isset($e->errorType)) {
           app()->make('Psr\Log\LoggerInterface')->error($e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
 
-          return $this->respond->error([], 500);
+          return response(new JsonapiError([]), 500);
       } elseif ($e->errorType === 'access_denied') {
-          return $this->respond->error([
-          'description' => $e->getMessage(),
+          return response(new JsonapiError([
+          'detail' => $e->getMessage(),
           'code' => 110,
-      ], 401);
+      ]), 401);
       } elseif ($e->errorType === 'invalid_client') {
-          return $this->respond->error([
-        'description' => $e->getMessage(),
+          return response(new JsonapiError([
+        'detail' => $e->getMessage(),
         'code' => 111,
-      ], 401);
+      ]), 401);
       } elseif ($e->errorType === 'unsupported_grant_type') {
-          return $this->respond->error([
-        'description' => $e->getMessage(),
+          return response(new JsonapiError([
+        'detail' => $e->getMessage(),
         'code' => 112,
-      ], 400);
+      ]), 400);
       } elseif ($e->errorType === 'invalid_scope') {
-          return $this->respond->error([
-        'description' => $e->getMessage(),
+          return response(new JsonapiError([
+        'detail' => $e->getMessage(),
         'code' => 113,
-      ], 400);
+      ]), 400);
       } elseif ($e->errorType === 'invalid_request') {
-          return $this->respond->error([
-        'description' => $e->getMessage(),
+          return response(new JsonapiError([
+        'detail' => $e->getMessage(),
         'code' => 114,
-      ], 400);
+      ]), 400);
       } else {
-          return $this->respond->error([
-        'description' => $e->getMessage(),
-      ], 400);
+          return response(new JsonapiError([
+        'detail' => $e->getMessage(),
+      ]), 400);
       }
   }
 }

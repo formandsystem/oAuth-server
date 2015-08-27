@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call('Testing_ClientsTableSeeder');
 		$this->call('Testing_ScopesTableSeeder');
+        $this->call('Testing_AccessTokenTableSeeder');
 		// $this->call('AuthCodesTableSeeder');
     }
 }
