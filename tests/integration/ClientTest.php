@@ -118,54 +118,6 @@ class ClientTest extends BasetestCase
     /**
      * @test
      */
-    // public function update_client()
-    // {
-    //     $response = $this->client->put('client/test_client_id', [
-    //         'headers' => [
-    //             'Accept' => 'application/json',
-    //             'Authorization' => 'Bearer cms_token',
-    //         ],
-    //     ]);
-    //     $this->markTestSkipped('Not yet done');
-    //     $this->checkDefaultHeader($response);
-    //     $this->checkAuthHeader($response);
-    //     $this->checkStatusCode(self::HTTP_OK, $response->getStatusCode());
-    // }
-    /**
-     * @test
-     */
-    // public function update_client_missing_access_rights()
-    // {
-    //     $response = $this->client->put('client/test_client_id', [
-    //         'headers' => [
-    //             'Accept' => 'application/json',
-    //             'Authorization' => 'Bearer test_client_id',
-    //         ],
-    //     ]);
-    //
-    //     $this->checkDefaultHeader($response);
-    //     $this->checkAuthHeader($response);
-    //     $this->checkStatusCode(self::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    // }
-    /**
-     * @test
-     */
-    // public function update_client_client_not_found()
-    // {
-    //     $response = $this->client->put('client/not_found_client_id', [
-    //         'headers' => [
-    //             'Accept' => 'application/json',
-    //             'Authorization' => 'Bearer cms_token',
-    //         ],
-    //     ]);
-    //
-    //     $this->checkDefaultHeader($response);
-    //     $this->checkAuthHeader($response);
-    //     $this->checkStatusCode(self::HTTP_NOT_FOUND, $response->getStatusCode());
-    // }
-    /**
-     * @test
-     */
     public function delete_client()
     {
         $response = $this->client->delete('client/test_delete_client_id', [
