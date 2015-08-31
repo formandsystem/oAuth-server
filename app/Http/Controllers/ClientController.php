@@ -111,25 +111,34 @@ class ClientController extends ApiController implements Httpstatuscodes
     /*
      * update
      */
-    public function update($id)
-    {
-        // validate request access token
-        $validateAccess = $this->hasAccessOrFail(['client.update']);
-        // validate request access token
-        if ($validateAccess !== true) {
-            return response($validateAccess, self::HTTP_UNAUTHORIZED);
-        }
-
-        $client = $this->db->table('oauth_clients')->where('id', $id)->first();
-
-        if (count($client) == 0) {
-            return response(new JsonapiError([
-                'code' => 304,
-                'title' => 'Not found',
-                'detail' => 'The resource was not found.',
-            ]), self::HTTP_NOT_FOUND);
-        }
-    }
+    // public function update($id)
+    // {
+    //     // validate request access token
+    //     $validateAccess = $this->hasAccessOrFail(['client.update']);
+    //     // validate request access token
+    //     if ($validateAccess !== true) {
+    //         return response($validateAccess, self::HTTP_UNAUTHORIZED);
+    //     }
+    //
+    //     $clientData = $this->request->all();
+    //     if (count($clientData) > 0) {
+    //         if( isset($clientData['client_name']) && is_string($clientData['client_name']) ){
+    //             $updateData['name'] = $clientData['client_name'];
+    //         }
+    //         if( isset($clientData['client_name']) && is_string($clientData['client_name']) ){
+    //             $updateData['name'] = $clientData['client_name'];
+    //         }
+    //         $client = $this->db->table('oauth_clients')->where('id', $id)->update($updateData);
+    //     }
+    //
+    //     if (count($client) == 0) {
+    //         return response(new JsonapiError([
+    //             'code' => 304,
+    //             'title' => 'Not found',
+    //             'detail' => 'The resource was not found.',
+    //         ]), self::HTTP_NOT_FOUND);
+    //     }
+    // }
     /*
      * create a new client
      */
